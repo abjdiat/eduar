@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html  lang="ar" >
 <link rel="stylesheet" media="screen" href="1" type="text/css"/>
 <style>
 body{text-align:center;   font-family: 'DroidArabicNaskhRegular';font-weight:bolder;
@@ -14,9 +14,25 @@ img{float:right;width:200px;height:180px;border:10px solid #484111;margin:10px;p
 </style>
 
 <script charset="utf-8">
-  var animals_en=["horse","sheep","camel","wolf","fish","snake","kangaroo","penguin","bear","dog","duck","cat","turkey","fox","mouse","goat","shrimp","elephant","giraffe","frog","ant","owl","donkey","chicken","bee","tiger","turtle","banana","apple","cherry","lemon","grapes","tomatoes","onion","pepper","orange","eggplant","watermelon","carrots","corn","cow","candle","bag","strawberry","keys","arrow","cup","ball","car","ship","truck","train","airplane","notebook","book","boy","girl","grandfather","grandmother","father","mother","nose","mouth","eye","sun","moon",'luna',"cloud","umbrella","shoe","camera","cactus"];
+    var words_to_display=4;
+   
+  var animals_en=["horse","sheep","camel","wolf","fish","snake","kangaroo","penguin","bear","dog","duck","cat","turkey",
+                  "fox","mouse","goat","shrimp","elephant","giraffe","frog","ant","owl","donkey","chicken","bee",
+                  "tiger","turtle","banana","apple","cherry","lemon","grapes","tomatoes","onion","pepper","orange",
+                  "eggplant","watermelon","carrots","corn","cow","candle","bag","strawberry","keys","arrow","cup","ball",
+                  "car","ship","truck","train","airplane","notebook","book","boy","girl","grandfather","grandmother",
+                  "father","mother","nose","mouth","eye","sun","moon",'luna',"cloud","umbrella","shoe","camera","cactus",
+                 "pen","flag","table","hat","nut","doctor","teacher","chef","cop","engineer","castle","bucket"
+            
+                 ];
 
-var animals_ar=["حصان","خروف","جمل","ذئب","سمكة","ثعبان","كنغر","بطريق","دب","كلب","بطة","قطة","ديك","ثعلب","فأر","معزة","ربيان","فيل","زرافة","ضفدع","نملة","بومة","حمار","دجاجة","نحلة","نمر","سلحفاة","موز","تفاح","كرز","ليمون","عنب","طماطم","بصل","فلفل","برتقال","باذنجان","بطيخ","جزر","ذرة","بقرة","شمعة","كيس","فراولة","مفاتيح","سهم","كوب","كرة","سيارة","سفينة","شاحنة","قطار","طائرة","دفتر","كتاب","ولد","بنت","جد","جدة","أب","أم","أنف","فم","عين","شمس","قمر",'هلال',"غيمة","مظلة","حذاء","كامرا","صباريات"];
+var animals_ar=["حصان","خروف","جمل","ذئب","سمكة"
+                ,"ثعبان","كنغر","بطريق","دب","كلب","بطة","قطة","ديك","ثعلب","فأر","معزة","ربيان","فيل","زرافة","ضفدع","نملة","بومة","حمار"
+                ,"دجاجة","نحلة","نمر","سلحفاة","موز","تفاح","كرز","ليمون","عنب","طماطم","بصل","فلفل","برتقال","باذنجان","بطيخ","جزر"
+                ,"ذرة","بقرة","شمعة","كيس","فراولة","مفاتيح","سهم","كوب","كرة","سيارة","سفينة","شاحنة","قطار","طائرة","دفتر","كتاب"
+                ,"ولد","بنت"
+                ,"جد","جدة","أب","أم","أنف","فم","عين","شمس","قمر",'هلال',"غيمة","مظلة","حذاء","كامرا","صباريات",
+                "قلم","علم","طاولة","قبعة","جوز","طبيب","معلم","طباخ","شرطي","مهندس","قلعة","دلو"];
 
 var delay = ( function() {
     var timer = 0;
@@ -36,7 +52,7 @@ var countee = 0;
 function counttrue(){
     
 countee=countee+1;
-if (countee == 4){
+if (countee == words_to_display){
   delay(function(){
   window.location.reload(true)
 }, 1000 )
@@ -94,9 +110,9 @@ function shuffleArray(array) {
 shuffleArray(nums);
 function newElement() {
 let i =0;
-while(i<4){
+while(i<words_to_display){
 
-  var li = document.createElement("li");
+  var li = document.createElement("li"); 
   var inputValue = animals_ar[nums[i]];
   li.id=animals_en[nums[i]];
   li.setAttribute("draggable","true");
