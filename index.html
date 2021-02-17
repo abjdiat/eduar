@@ -14,6 +14,9 @@ img{float:right;width:200px;height:180px;border:10px solid #484111;margin:10px;p
 </style>
 
 <script charset="utf-8">
+   const soundEffect=new Audio();
+   soundEffect.play();
+   
     var words_to_display=4;
    
   var animals_en=["horse","sheep","camel","wolf","fish","snake","kangaroo","penguin","bear","dog","duck","cat","turkey",
@@ -83,8 +86,8 @@ function drop_handler(ev) {
  if (ev.target.id == data+"target") {
 document.getElementById(data).style.display = 'none';
 ev.currentTarget.style.border = "10px solid green";
-var x = document.getElementById("myAudio"); 
-x.play();
+soundEffect.src="bravo.m4a"
+    soundEffect.play();
 
 counttrue();
  // Clear the drag data cache (for all formats/types)
