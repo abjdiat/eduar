@@ -2,21 +2,18 @@
 <html  lang="ar" >
 <link rel="stylesheet" media="screen" href="1" type="text/css"/>
 <style>
-body{text-align:center;   font-family: 'DroidArabicNaskhRegular';font-weight:bolder;
+body{width:50%;text-align:center;   font-family: 'DroidArabicNaskhRegular';font-weight:bolder;
    font-weight: normal;
    font-style: normal;background-color: #c2c6b3;
 padding:20px;margin:30px}
-ul{float:right;width:40%;}
+ul{float:left;width:100%;}
 
-li{font-size:40pt;display:block;padding:10px;margin:10px;background:#dad295;text-align:center;border:5px solid #717845;width:200px;}
-img{float:right;width:200px;height:200px;border:10px solid #484111;margin:10px;padding:10px;display:block-inline}
+li{font-size:40pt;width:150px;height:150px;display:inline-block;padding:10px;margin:10px;background:#dad295;text-align:center;border:5px solid #717845;}
+img{float:right;width:200px;height:180px;border:10px solid #484111;margin:10px;padding:10px}
 
 </style>
 
 <script charset="utf-8">
-   const soundEffect=new Audio();
-   soundEffect.play();
-   
     var words_to_display=4;
    
   var animals_en=["horse","sheep","camel","wolf","fish","snake","kangaroo","penguin","bear","dog","duck","cat","turkey",
@@ -86,10 +83,8 @@ function drop_handler(ev) {
  if (ev.target.id == data+"target") {
 document.getElementById(data).style.display = 'none';
 ev.currentTarget.style.border = "10px solid green";
-soundEffect.src="bravo.m4a"
-soundEffect.type="audio/mp4"
-soundEffect.load();
-    soundEffect.play();
+var x = document.getElementById("myAudio"); 
+x.play();
 
 counttrue();
  // Clear the drag data cache (for all formats/types)
