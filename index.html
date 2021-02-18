@@ -6,18 +6,15 @@ body{text-align:center;   font-family: 'DroidArabicNaskhRegular';font-weight:bol
    font-weight: normal;
    font-style: normal;background-color: #c2c6b3;
 padding:20px;margin:30px}
-ul{float:left;width:100%;}
+ul{float:right;width:40%;}
 
-li{font-size:40pt;width:150px;height:150px;display:inline-block;padding:10px;margin:10px;background:#dad295;text-align:center;border:5px solid #717845;}
-img{float:right;width:200px;height:180px;border:10px solid #484111;margin:10px;padding:10px}
+li{font-size:40pt;display:block;padding:10px;margin:10px;background:#dad295;text-align:center;border:5px solid #717845;width:200px;}
+img{float:right;width:200px;height:200px;border:10px solid #484111;margin:10px;padding:10px;display:block-inline}
 
 </style>
 
 <script charset="utf-8">
    const soundEffect=new Audio();
-   soundEffect.src="bravo.m4a"
-      soundEffect.load();
-
    soundEffect.play();
    
     var words_to_display=4;
@@ -89,7 +86,9 @@ function drop_handler(ev) {
  if (ev.target.id == data+"target") {
 document.getElementById(data).style.display = 'none';
 ev.currentTarget.style.border = "10px solid green";
-
+soundEffect.src="bravo.m4a"
+soundEffect.type="audio/mp4"
+soundEffect.load();
     soundEffect.play();
 
 counttrue();
