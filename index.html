@@ -9,12 +9,40 @@ padding:20px;margin:30px}
 ul{float:right;width:50%;height: 100%}
 
 li{font-size:40pt;width:150px;height:150px;display:block;padding:10px;margin:10px;background:#dad295;text-align:center;border:5px solid #717845;}
-img{float:right;width:200px;height:180px;border:10px solid #484111;margin:10px;padding:10px}
+div#images   {display: block;
+    height: 100%;
+    vertical-align: middle;
+  }
+img{float:right;width:200px;height:180px;border:10px solid #484111;margin:10px;padding:10px;}
+.frame {
+    height: 150px;      /* equals max image height */
+    width: 160px;
+    border: 1px solid red;
+    white-space: nowrap;
+    
+    text-align: center; margin: 1em 0;
+}
 
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+img {
+    background: #3A6F9A;
+    vertical-align: middle;
+    max-height:150px;
+    max-width: 160px;
+}
 </style>
 
 <script charset="utf-8">
-    var words_to_display=4;
+const queryString = window.location.search;
+
+    const urlParams = new URLSearchParams(queryString);
+    const lvl = urlParams.get('lvl');
+const words_to_display = urlParams.get('wds');
    
   var animals_en=["horse","sheep","camel","wolf","fish","snake","kangaroo","penguin","bear","dog","duck","cat","turkey",
                   "fox","mouse","goat","shrimp","elephant","giraffe","frog","ant","owl","donkey","chicken","bee",
@@ -52,6 +80,7 @@ nums[f]=f;
 
 }
 
+
 var countee = 0;
 function counttrue(){
     
@@ -81,14 +110,14 @@ function drop_handler(ev) {
  // Get the data, which is the id of the drop target
  var data = ev.dataTransfer.getData("text");
  if (ev.target.id == data+"target") {
-document.getElementById(data).style.display = 'none';
+//document.getElementById(data).style.display = 'none';
 ev.currentTarget.style.border = "10px solid green";
 var x = document.getElementById("myAudio"); 
 x.play();
 
 counttrue();
  // Clear the drag data cache (for all formats/types)
- ev.dataTransfer.clearData();
+ //ev.dataTransfer.clearData();
 
 }
 else {
@@ -112,6 +141,24 @@ function shuffleArray(array) {
   return array;
 }
 shuffleArray(nums);
+
+function word3(b){
+  b=lvl;
+threelwords=new Array()
+threelwordse=new Array();
+nums.forEach(function item(a){if(animals_ar[a].length==b){threelwords.push(animals_ar[a]);threelwordse.push(animals_en[a])}}
+  );
+
+
+}
+word3();
+
+var nums2=Array(threelwords.length);
+for (var f=0;f<nums2.length;f++){
+nums2[f]=f;
+
+}
+
 function word4(){
   words_ar=[
   [],
@@ -120,22 +167,18 @@ function word4(){
   []
 ];
 
-  imgs_en=new Array()
+  imgs_en=new Array();
   var i=0;
 var num =4;
 while (i<4){
- words_ar[i][0]=animals_ar[nums[i]];
-  words_ar[i][1]=animals_en[nums[i]];
-  imgs_en[i]=animals_en[nums[i]];
-  i++
+  words_ar[i][0]=threelwords[nums2[i]];
+  words_ar[i][1]=threelwordse[nums2[i]];
+  imgs_en[i]=threelwordse[nums2[i]];
+  i++ ;
 }
 }
 word4();
 shuffleArray(words_ar)
-
-words_ar.forEach(arr => {
-  arr.forEach(d => console.log(d));
-});
 function newElement() {
 let i =0;
 while(i<words_to_display){
@@ -191,7 +234,7 @@ i++;
   Your browser does not support the audio element.
 </audio>
 <div>
-   <div id="box1> 
+
 <ul id=animals>
   <script>
     newElement();
@@ -201,7 +244,8 @@ i++;
    
    <div id='images'>
   <script>newimg()</script>
-</div>
+   </div>
+
 
 </body>
 </html> 
