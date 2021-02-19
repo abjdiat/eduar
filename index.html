@@ -6,7 +6,7 @@ body{text-align:center;   font-family: 'DroidArabicNaskhRegular';font-weight:bol
    font-weight: normal;
    font-style: normal;background-color: #c2c6b3;
 padding:20px;margin:30px}
-ul{float:left;width:100%;}
+ul{float:left;width:50%;height: 100%}
 
 li{font-size:40pt;width:150px;height:150px;display:inline-block;padding:10px;margin:10px;background:#dad295;text-align:center;border:5px solid #717845;}
 img{float:right;width:200px;height:180px;border:10px solid #484111;margin:10px;padding:10px}
@@ -14,7 +14,6 @@ img{float:right;width:200px;height:180px;border:10px solid #484111;margin:10px;p
 </style>
 
 <script charset="utf-8">
-   
     var words_to_display=4;
    
   var animals_en=["horse","sheep","camel","wolf","fish","snake","kangaroo","penguin","bear","dog","duck","cat","turkey",
@@ -114,12 +113,19 @@ function shuffleArray(array) {
 }
 shuffleArray(nums);
 function word4(){
-  words_ar=new Array();
+  words_ar=[
+  [],
+  [],
+  [],
+  []
+];
+
   imgs_en=new Array()
   var i=0;
 var num =4;
 while (i<4){
- words_ar[i]=animals_ar[nums[i]];
+ words_ar[i][0]=animals_ar[nums[i]];
+  words_ar[i][1]=animals_en[nums[i]];
   imgs_en[i]=animals_en[nums[i]];
   i++
 }
@@ -127,15 +133,18 @@ while (i<4){
 word4();
 shuffleArray(words_ar)
 
+words_ar.forEach(arr => {
+  arr.forEach(d => console.log(d));
+});
 function newElement() {
 let i =0;
 while(i<words_to_display){
 
   var li = document.createElement("li"); 
 
-  var inputValue = words_ar[i];
+  var inputValue = words_ar[i][0];
   //if(inputValue.length == 4 ){
-  li.id=imgs_en[i];
+  li.id=words_ar[i][1];
 
   li.setAttribute("draggable","true");
   li.setAttribute("ondragstart"," dragstart_handler(event)");
@@ -146,7 +155,9 @@ while(i<words_to_display){
 i++;}
   }
 //}
-shuffleArray(imgs_en)
+shuffleArray(words_ar);
+shuffleArray(imgs_en);
+
 function newimg() {
 let i =0;
 while(i<4){
@@ -154,8 +165,8 @@ while(i<4){
   var li = document.createElement("img");
 
 
-  var inputValue = animals_en[nums[i]]+".jpg"
-  li.id=animals_en[nums[i]]+"target";
+  var inputValue = imgs_en[i]+".jpg"
+  li.id=imgs_en[i]+"target";
     li.setAttribute("src",inputValue);
   li.setAttribute("ondrop","drop_handler(event)");
   li.setAttribute("ondragover","dragover_handler(event)");
@@ -163,7 +174,6 @@ while(i<4){
   li.appendChild(t);
 
     document.getElementById("images").appendChild(li);
-    delete animals_en[nums[i]];
 
 i++;
   }
