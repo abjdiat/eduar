@@ -66,7 +66,6 @@ var animals_ar=["حِصَانٌ","خروف","جمل","ذئب","سمكة"
                 "قلم","علم","طاولة","قبعة","جوز","طبيب","معلمة","طباخ","شرطي","مهندس","قلعة","دلو","يفكر","تكذب","تقفز","أحمر","أبيض","أسود","وردي","ورقة"
                 ,"هدية","صندوق","يقفز","يسبح","يلون","يمسك","يسحب","ينام","يرمي","يمشي","يتسلق","يدفع","يجلس","صدفة","يمين","يسار","شعر" ,"باب" ,"واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة","حليب","عصير","ملعب","بطانية","طبل","فراشة","حديقة","يجري","تكتب","تسقي","تقود","تركل","تأكل","سكين","يطرق"
 ];
-
 var delay = ( function() {
     var timer = 0;
     return function(callback, ms) {
@@ -142,12 +141,12 @@ function shuffleArray(array) {
   return array;
 }
 shuffleArray(nums);
-ltm=animals_ar[Math.floor(Math.random() * words.length)][0]
+
 function word3(b){
   b=lvl;
 threelwords=new Array()
 threelwordse=new Array();
-nums.forEach(function item(a){if(animals_ar[a].length==b && animals_ar[a][0]==ltm){threelwords.push(animals_ar[a]);threelwordse.push(animals_en[a])}}
+nums.forEach(function item(a){if(animals_ar[a].length==b){threelwords.push(animals_ar[a]);threelwordse.push(animals_en[a])}}
   );
 
 
