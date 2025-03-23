@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiragana Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #quiz-container { margin-top: 50px; }
+        button { display: block; margin: 10px auto; padding: 10px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>Hiragana Quiz</h1>
+    <div id="quiz-container">
+        <h2 id="hiragana-char">?</h2>
+        <div id="choices"></div>
+        <p>Correct Answers: <span id="score">0</span> / 46</p>
+    </div>
+    <script>
+        const hiragana = [
+            { char: "あ", romaji: "a" }, { char: "い", romaji: "i" }, { char: "う", romaji: "u" },
+            { char: "え", romaji: "e" }, { char: "お", romaji: "o" }, { char: "か", romaji: "ka" },
+            { char: "き", romaji: "ki" }, { char: "く", romaji: "ku" }, { char: "け", romaji: "ke" },
+            { char: "こ", romaji: "ko" }, { char: "さ", romaji: "sa" }, { char: "し", romaji: "shi" },
+            { char: "す", romaji: "su" }, { char: "せ", romaji: "se" }, { char: "そ", romaji: "so" },
+            { char: "た", romaji: "ta" }, { char: "ち", romaji: "chi" }, { char: "つ", romaji: "tsu" },
+            { char: "て", romaji: "te" }, { char: "と", romaji: "to" }, { char: "な", romaji: "na" },
+            { char: "に", romaji: "ni" }, { char: "ぬ", romaji: "nu" }, { char: "ね", romaji: "ne" },
+            { char: "の", romaji: "no" }, { char: "は", romaji: "ha" }, { char: "ひ", romaji: "hi" },
+            { char: "ふ", romaji: "fu" }, { char: "へ", romaji: "he" }, { char: "ほ", romaji: "ho" },
+            { char: "ま", romaji: "ma" }, { char: "み", romaji: "mi" }, { char: "む", romaji: "mu" },
+            { char: "め", romaji: "me" }, { char: "も", romaji: "mo" }, { char: "や", romaji: "ya" },
+            { char: "ゆ", romaji: "yu" }, { char: "よ", romaji: "yo" }, { char: "ら", romaji: "ra" },
+            { char: "り", romaji: "ri" }, { char: "る", romaji: "ru" }, { char: "れ", romaji: "re" },
+            { char: "ろ", romaji: "ro" }, { char: "わ", romaji: "wa" }, { char: "を", romaji: "wo" },
+            { char: "ん", romaji: "n" }
+        ];
+        
+        let remaining = [...hiragana];
+        let correctCount = 0;
+        
+        function startGame() {
+            if (remaining.length === 0) {
+                alert("Congratulations! You have learned all Hiragana characters!");
+                return;
+            }
+            
+            const index = Math.floor(Math.random() * remaining.length);
+            const current = remaining[index];
+            document.getElementById("hiragana-char").textContent = current.char;
+            
+            const choices = [current.romaji];
+            while (choices.length < 4) {
+                const randomChoice = hiragana[Math.floor(Math.random() * hiragana.length)].romaji;
+                if (!choices.includes(randomChoice)) {
+                    choices.push(randomChoice);
+                }
+            }
+            choices.sort(() => Math.random() - 0.5);
+            
+            const choicesDiv = document.getElementById("choices");
+            choicesDiv.innerHTML = "";
+            choices.forEach(choice => {
+                const button = document.createElement("button");
+                button.textContent = choice;
+                button.onclick = () => checkAnswer(choice, current, index);
+                choicesDiv.appendChild(button);
+            });
+        }
+        
+        function checkAnswer(choice, current, index) {
+            if (choice === current.romaji) {
+                correctCount++;
+                document.getElementById("score").textContent = correctCount;
+                remaining.splice(index, 1);
+            }
+            startGame();
+        }
+        
+        startGame();
+    </script>
+</body>
+</html>
