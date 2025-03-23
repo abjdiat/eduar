@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katakana Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #quiz-container { margin-top: 50px; }
+        button { display: block; margin: 10px auto; padding: 10px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>Katakana Quiz</h1>
+    <div id="quiz-container">
+        <h2 id="katakana-char">?</h2>
+        <div id="choices"></div>
+        <p>Correct Answers: <span id="score">0</span> / 46</p>
+    </div>
+    <script>
+        const katakana = [
+            { char: "ア", romaji: "a" }, { char: "イ", romaji: "i" }, { char: "ウ", romaji: "u" },
+            { char: "エ", romaji: "e" }, { char: "オ", romaji: "o" }, { char: "カ", romaji: "ka" },
+            { char: "キ", romaji: "ki" }, { char: "ク", romaji: "ku" }, { char: "ケ", romaji: "ke" },
+            { char: "コ", romaji: "ko" }, { char: "サ", romaji: "sa" }, { char: "シ", romaji: "shi" },
+            { char: "ス", romaji: "su" }, { char: "セ", romaji: "se" }, { char: "ソ", romaji: "so" },
+            { char: "タ", romaji: "ta" }, { char: "チ", romaji: "chi" }, { char: "ツ", romaji: "tsu" },
+            { char: "テ", romaji: "te" }, { char: "ト", romaji: "to" }, { char: "ナ", romaji: "na" },
+            { char: "ニ", romaji: "ni" }, { char: "ヌ", romaji: "nu" }, { char: "ネ", romaji: "ne" },
+            { char: "ノ", romaji: "no" }, { char: "ハ", romaji: "ha" }, { char: "ヒ", romaji: "hi" },
+            { char: "フ", romaji: "fu" }, { char: "ヘ", romaji: "he" }, { char: "ホ", romaji: "ho" },
+            { char: "マ", romaji: "ma" }, { char: "ミ", romaji: "mi" }, { char: "ム", romaji: "mu" },
+            { char: "メ", romaji: "me" }, { char: "モ", romaji: "mo" }, { char: "ヤ", romaji: "ya" },
+            { char: "ユ", romaji: "yu" }, { char: "ヨ", romaji: "yo" }, { char: "ラ", romaji: "ra" },
+            { char: "リ", romaji: "ri" }, { char: "ル", romaji: "ru" }, { char: "レ", romaji: "re" },
+            { char: "ロ", romaji: "ro" }, { char: "ワ", romaji: "wa" }, { char: "ヲ", romaji: "wo" },
+            { char: "ン", romaji: "n" }
+        ];
+        
+        let remaining = [...katakana];
+        let correctCount = 0;
+        
+        function startGame() {
+            if (remaining.length === 0) {
+                alert("Congratulations! You have learned all Katakana characters!");
+                return;
+            }
+            
+            const index = Math.floor(Math.random() * remaining.length);
+            const current = remaining[index];
+            document.getElementById("katakana-char").textContent = current.char;
+            
+            const choices = [current.romaji];
+            while (choices.length < 4) {
+                const randomChoice = katakana[Math.floor(Math.random() * katakana.length)].romaji;
+                if (!choices.includes(randomChoice)) {
+                    choices.push(randomChoice);
+                }
+            }
+            choices.sort(() => Math.random() - 0.5);
+            
+            const choicesDiv = document.getElementById("choices");
+            choicesDiv.innerHTML = "";
+            choices.forEach(choice => {
+                const button = document.createElement("button");
+                button.textContent = choice;
+                button.onclick = () => checkAnswer(choice, current, index);
+                choicesDiv.appendChild(button);
+            });
+        }
+        
+        function checkAnswer(choice, current, index) {
+            if (choice === current.romaji) {
+                correctCount++;
+                document.getElementById("score").textContent = correctCount;
+                remaining.splice(index, 1);
+            }
+            startGame();
+        }
+        
+        startGame();
+    </script>
+</body>
+</html>
