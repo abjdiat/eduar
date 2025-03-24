@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiragana Sentence Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #quiz-container { margin-top: 50px; }
+        button { display: block; margin: 10px auto; padding: 10px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>Hiragana Sentence Quiz</h1>
+    <div id="quiz-container">
+        <h2 id="hiragana-sentence">?</h2>
+        <div id="choices"></div>
+        <p>Correct Answers: <span id="score">0</span> / 100</p>
+    </div>
+    <script>
+        const sentences = [
+            { hiragana: "わたしはがくせいです。", romaji: "watashi wa gakusei desu." },
+            { hiragana: "きょうはあついですね。", romaji: "kyou wa atsui desu ne." },
+            { hiragana: "あなたのなまえはなんですか。", romaji: "anata no namae wa nan desu ka." },
+            { hiragana: "どこにいきますか。", romaji: "doko ni ikimasu ka." },
+            { hiragana: "これはほんです。", romaji: "kore wa hon desu." },
+            { hiragana: "にほんごをべんきょうしています。", romaji: "nihongo o benkyou shiteimasu." },
+            { hiragana: "すしがすきです。", romaji: "sushi ga suki desu." },
+            { hiragana: "あしたはやすみです。", romaji: "ashita wa yasumi desu." },
+            { hiragana: "いまなんじですか。", romaji: "ima nanji desu ka." },
+            { hiragana: "でんしゃでいきます。", romaji: "densha de ikimasu." }
+        ];
+        
+        let remaining = [];
+        let correctCount = 0;
+
+        function startGame() {
+            if (remaining.length === 0) {
+                if (correctCount === sentences.length) {
+                    alert("Congratulations! You answered all questions correctly!");
+                } else {
+                    alert("Game Over! You answered " + correctCount + " correctly.");
+                }
+                correctCount = 0;
+                document.getElementById("score").textContent = correctCount;
+                remaining = [...sentences];
+            }
+
+            let index = Math.floor(Math.random() * remaining.length);
+            let currentQuestion = remaining[index];
+            remaining.splice(index, 1);
+
+            document.getElementById("hiragana-sentence").textContent = currentQuestion.hiragana;
+            let choicesContainer = document.getElementById("choices");
+            choicesContainer.innerHTML = "";
+
+            let choices = [currentQuestion.romaji];
+            while (choices.length < 4) {
+                let randomChoice = sentences[Math.floor(Math.random() * sentences.length)].romaji;
+                if (!choices.includes(randomChoice)) {
+                    choices.push(randomChoice);
+                }
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach(choice => {
+                let button = document.createElement("button");
+                button.textContent = choice;
+                button.onclick = () => checkAnswer(choice, currentQuestion.romaji);
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selected, correct) {
+            if (selected === correct) {
+                correctCount++;
+                document.getElementById("score").textContent = correctCount;
+            }
+            startGame();
+        }
+
+        remaining = [...sentences];
+        startGame();
+    </script>
+</body>
+</html>
