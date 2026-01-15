@@ -1,268 +1,189 @@
 <!DOCTYPE html>
-<html  lang="ar" >
-<link rel="stylesheet" media="screen" href="1" type="text/css"/>
-<style>
-body{text-align:center;   font-family: 'DroidArabicNaskhRegular';font-weight:bolder;
-   font-weight: normal;
-   font-style: normal;background-color: #c2c6b3;
-padding:20px;margin:30px}
-ul{float:right;width:50%;height: 100%}
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic Learning Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'DroidArabicNaskhRegular', sans-serif;
+            background-color: #c2c6b3;
+            margin: 0;
+            padding: 10px;
+            touch-action: manipulation; /* Prevents zooming while dragging */
+        }
 
-li{font-size:40pt;width:150px;height:150px;display:block;padding:10px;margin:10px;background:#dad295;text-align:center;border:5px solid #717845;}
-div#images   {display: block;
-    height: 100%;
-    vertical-align: middle;
-  }
-img{float:right;width:200px;height:180px;border:10px solid #484111;margin:10px;padding:10px;}
-.frame {a
-    height: 150px;      /* equals max image height */
-    width: 160px;
-    border: 1px solid red;
-    white-space: nowrap;
-    
-    text-align: center; margin: 1em 0;
-}
+        .container {
+            display: flex;
+            flex-direction: row-reverse; /* Arabic alignment */
+            justify-content: space-around;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
 
-.helper {
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle;
-}
+        ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-img {
-    background: #3A6F9A;
-    vertical-align: middle;
-    max-height:150px;
-    max-width: 160px;
-}
-</style>
+        li {
+            font-size: 1.5rem;
+            width: 120px;
+            height: 60px;
+            line-height: 60px;
+            background: #dad295;
+            border: 4px solid #717845;
+            border-radius: 10px;
+            cursor: grab;
+            user-select: none;
+            touch-action: none; /* Required for mobile drag script */
+        }
 
-<script charset="utf-8">
-  var alphabet="أبجدهوزحطيكلمنسعفصقرشتثخذضظغ";
-alphabet=alphabet.split('');
-var randl=Math.floor(Math.random() *alphabet.length);
-const queryString = window.location.search;
+        #images {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-    const urlParams = new URLSearchParams(queryString);
-    const lvl = urlParams.get('lvl');
-const words_to_display = urlParams.get('wds');
-   
-  var animals_en=["horse","sheep","camel","wolf","fish","snake","kangaroo","penguin","bear","dog","duck","cat","turkey",
-                  "fox","mouse","goat","shrimp","elephant","giraffe","frog","ant","owl","donkey","chicken","bee",
-                  "tiger","turtle","banana","apple","cherry","lemon","grapes","tomatoes","onion","pepper","orange",
-                  "eggplant","watermelon","carrots","corn","cow","candle","bag","strawberry","keys","arrow","cup","ball",
-                  "car","ship","truck","train","airplane","notebook","book","boy","girl","grandfather","grandmother",
-                  "father","mother","nose","mouth","eye","sun","moon",'luna',"cloud","umbrella","shoe","camera","cactus",
-                 "pen","flag","table","hat","nut","doctor","teacher","chef","cop","engineer","castle","bucket","think","lie","jump","red","white","black","pink","leaf","gift","box","jump","swim","paint","hold","pull","sleep","throw","walk","climb","push","sit","shell","right","left","hair","door","one","two","three","four","five","six","seven","eight","nine","milk","juice","court","blanket","drum","butterfly","garden","run","write","water","drive","kick","eat","knife","knock","flowers",'envelope',"nail","gazelle","darkness","cucumber","digger","ring","rock","hoopoe","lamp","tongue","meat","melody","river","button","butter",
-                 "tooth","pyramid","gold","bandage","tail","crow","submarine","forest","sand","leg","pomegranate","laugh","lock","seal","crab"
-                
+        img {
+            width: 120px;
+            height: 120px;
+            border: 8px solid #484111;
+            border-radius: 15px;
+            background: #3A6F9A;
+            object-fit: cover;
+        }
 
-            
-                 ];
-
-
-var animals_ar=["حِصَانٌ","خروف","جمل","ذئب","سمكة"
-                ,"ثعبان","كنغر","بطريق","دب","كلب","بطة","قطة","ديك","ثعلب","فأر","معزة","ربيان","فيل","زرافة","ضفدع","نملة","بومة","حمار"
-                ,"دجاجة","نحلة","نمر","سلحفاة","موز","تفاح","كرز","ليمون","عنب","طماطم","بصل","فلفل","برتقال","باذنجان","بطيخ","جزر"
-                ,"ذرة","بقرة","شمعة","كيس","فراولة","مفاتيح","سهم","كوب","كرة","سيارة","سفينة","شاحنة","قطار","طائرة","دفتر","كتاب"
-                ,"ولد","بنت"
-                ,"جد","جدة","أب","أم","أنف","فم","عين","شمس","قمر",'هلال',"غيمة","مظلة","حذاء","كامرا","صبار",
-                "قلم","علم","طاولة","قبعة","جوز","طبيب","معلمة","طباخ","شرطي","مهندس","قلعة","دلو","يفكر","تكذب","تقفز","أحمر","أبيض","أسود","وردي","ورقة"
-                ,"هدية","صندوق","يقفز","يسبح","يلون","يمسك","يسحب","ينام","يرمي","يمشي","يتسلق","يدفع","يجلس","صدفة","يمين","يسار","شعر" ,"باب" ,"واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة","حليب","عصير","ملعب","بطانية","طبل","فراشة","حديقة","يجري","تكتب","تسقي","تقود","تركل","تأكل","سكين","يطرق","زهور","ظرف","ظفر","ظبي","ظلام","خيار","خنجر","خاتم","صخرة","هدهد","لمبة","لسان","لحمة","لحن","نهر","زر","زبدة","ضرس","هرم","ذهب","ضماد","ذيل","غراب","غواصة","غابة","رمل","رجل","رمان","ضحك","قفل","فقمة","سرطان"];
-var delay = ( function() {
-    var timer = 0;
-    return function(callback, ms) {
-        clearTimeout (timer);
-        timer = setTimeout(callback, ms);
-    };
-})();
-
-var nums=Array(animals_ar.length);
-for (var f=0;f<nums.length;f++){
-nums[f]=f;
-
-}
-
-var countee = 0;
-function counttrue(){
-    
-countee=countee+1;
-if (countee == 4){
-  delay(function(){
-  window.location.reload(true)
-}, 1000 )
-    }
-  }
-
-
-function dragstart_handler(ev) {
- console.log("dragStart");
- // Change the source element's background color to signify drag has started
- // Set the drag's format and data. Use the event target's id for the data
- 
- ev.dataTransfer.setData("text/plain", ev.target.id);
- }
-
-function dragover_handler(ev) {
- console.log("dragOver");
- ev.preventDefault();
-}
-
-function drop_handler(ev) {
- console.log("Drop");
- ev.preventDefault();
- // Get the data, which is the id of the drop target
- var data = ev.dataTransfer.getData("text");
- if (ev.target.id == data+"target") {
-//document.getElementById(data).style.display = 'none';
-ev.currentTarget.style.border = "10px solid green";
-var x = document.getElementById("myAudio"); 
-x.play();
-
-counttrue();
- // Clear the drag data cache (for all formats/types)
- ev.dataTransfer.clearData();
-
-}
-else {
-ev.currentTarget.style.border = "solid red";}
-var x2 = document.getElementById("myAudio2"); 
-x2.play();
-
-}
-function shuffleArray(array) {
-  let curId = array.length;
-  // There remain elements to shuffle
-  while (0 !== curId) {
-    // Pick a remaining element
-    let randId = Math.floor(Math.random() * curId);
-    curId -= 1;
-    // Swap it with the current element.
-    let tmp = array[curId];
-    array[curId] = array[randId];
-    array[randId] = tmp;
-  }
-  return array;
-}
-//shuffleArray(nums);
-
-function word3(b){
-  b=lvl;
-sameletterwords=new Array()
-sameletterwordse=new Array();
-//alphabet[randl]
-nums.forEach(function item(a){if(animals_ar[a][0]==alphabet[randl]){sameletterwords.push(animals_ar[a]);sameletterwordse.push(animals_en[a])}}
-  );
-//alert(sameletterwords);
-
-}
-word3();
-
-var nums2=Array(sameletterwords.length);
-for (var f=0;f<nums2.length;f++){
-nums2[f]=f;
-
-}
-function word4(){
-  words_ar= Array.from(Array(sameletterwords.length), () => new Array(2));
-
-  imgs_en=new Array();
-  var i=0;
-while (i<sameletterwords.length){
-  words_ar[i][0]=sameletterwords[nums2[i]];
-  words_ar[i][1]=sameletterwordse[nums2[i]];
-  imgs_en[i]=sameletterwordse[nums2[i]];
-  i++ ;
-}
-}
-word4();
-function w4rds(){
-words_ar_4=new Array();//arab words random
-words_ar_44=new Array();//arab words matching jpgs, this array will reshuffle once more
-words_ar_444=new Array();//arab words matching ids
-var i=0 ; 
-while (i<imgs_en.length){
-var m=Math.floor(Math.random() *imgs_en.length);
-//alert(m);
- result = words_ar_44.find(tree => tree.match(imgs_en[m]))
-//alert(result);
-if (!result){
-  //alert(words_ar[m]);
-words_ar_4[i]=words_ar[m][0]//arabic
-words_ar_444[i]=imgs_en[m];//english
-words_ar_44[i]=imgs_en[m];//english
-i=i+1;
-
-}
-
-}}
-w4rds();
-
-function newElement() {
-let i =0;
-while(i<4){
-
-  var li = document.createElement("li"); 
-
-  var inputValue = words_ar_4[i];
-  //if(inputValue.length == 4 ){
-  li.id=words_ar_444[i];
-
-  li.setAttribute("draggable","true");
-  li.setAttribute("ondragstart"," dragstart_handler(event)");
-  var t = document.createTextNode(inputValue);
-  li.appendChild(t);
-
-    document.getElementById("animals").appendChild(li);
-i++;}
-  }
-//}
-//fshuffleArray(words_ar_44)
-
-function newimg() {
-let i =0;
-imgs=new Array();
-
-while(i<4){
-  var li = document.createElement("img");
-
-
-  var inputValue = words_ar_444[3-i]+".jpg"
-  li.id=words_ar_444[3-i]+"target";
-    li.setAttribute("src",inputValue);
-  li.setAttribute("ondrop","drop_handler(event)");
-  li.setAttribute("ondragover","dragover_handler(event)");
-  var t = document.createTextNode(inputValue);
-  li.appendChild(t);
-
-    document.getElementById("images").appendChild(li);
-  i++;}
-}
-</script>
+        /* Mobile specific adjustments */
+        @media (max-width: 600px) {
+            li { width: 100px; font-size: 1.2rem; }
+            img { width: 100px; height: 100px; }
+        }
+    </style>
+</head>
 
 <body>
-<audio id="myAudio">
-  
-  <source src="bravo.m4a" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
-<audio id="myAudio2">
-  <source src="error.m4a" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
-<div>
 
-<ul id=animals>
-  <script>
-    newElement();
-  </script>
-  
-            </ul></div>
-   
-   <div id='images'>
-  <script>newimg()</script>
-   </div>
+<audio id="myAudio"><source src="bravo.m4a" type="audio/mpeg"></audio>
+<audio id="myAudio2"><source src="error.m4a" type="audio/mpeg"></audio>
 
+<div class="container">
+    <ul id="animals"></ul>
+    <div id="images"></div>
+</div>
 
+<script>
+var alphabet = "أبجدهوزحطيكلمنسعفصقرشتثخذضظغ".split('');
+var randl = Math.floor(Math.random() * alphabet.length);
+
+var animals_en = ["horse","sheep","camel","wolf","fish","snake","kangaroo","penguin","bear","dog","duck","cat","turkey","fox","mouse","goat","shrimp","elephant","giraffe","frog","ant","owl","donkey","chicken","bee","tiger","turtle","banana","apple","cherry","lemon","grapes","tomatoes","onion","pepper","orange","eggplant","watermelon","carrots","corn","cow","candle","bag","strawberry","keys","arrow","cup","ball","car","ship","truck","train","airplane","notebook","book","boy","girl","grandfather","grandmother","father","mother","nose","mouth","eye","sun","moon",'luna',"cloud","umbrella","shoe","camera","cactus","pen","flag","table","hat","nut","doctor","teacher","chef","cop","engineer","castle","bucket","think","lie","jump","red","white","black","pink","leaf","gift","box","jump","swim","paint","hold","pull","sleep","throw","walk","climb","push","sit","shell","right","left","hair","door","one","two","three","four","five","six","seven","eight","nine","milk","juice","court","blanket","drum","butterfly","garden","run","write","water","drive","kick","eat","knife","knock","flowers",'envelope',"nail","gazelle","darkness","cucumber","digger","ring","rock","hoopoe","lamp","tongue","meat","melody","river","button","butter","tooth","pyramid","gold","bandage","tail","crow","submarine","forest","sand","leg","pomegranate","laugh","lock","seal","crab"];
+var animals_ar = ["حِصَانٌ","خروف","جمل","ذئب","سمكة","ثعبان","كنغر","بطريق","دب","كلب","بطة","قطة","ديك","ثعلب","فأر","معزة","ربيان","فيل","زرافة","ضفدع","نملة","بومة","حمار","دجاجة","نحلة","نمر","سلحفاة","موز","تفاح","كرز","ليمون","عنب","طماطم","بصل","فلفل","برتقال","باذنجان","بطيخ","جزر","ذرة","بقرة","شمعة","كيس","فراولة","مفاتيح","سهم","كوب","كرة","سيارة","سفينة","شاحنة","قطار","طائرة","دفتر","كتاب","ولد","بنت","جد","جدة","أب","أم","أنف","فم","عين","شمس","قمر",'هلال',"غيمة","مظلة","حذاء","كامرا","صبار","قلم","علم","طاولة","قبعة","جوز","طبيب","معلمة","طباخ","شرطي","مهندس","قلعة","دلو","يفكر","تكذب","تقفز","أحمر","أبيض","أسود","وردي","ورقة","هدية","صندوق","يقفز","يسبح","يلون","يمسك","يسحب","ينام","يرمي","يمشي","يتسلق","يدفع","يجلس","صدفة","يمين","يسار","شعر" ,"باب" ,"واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة","حليب","عصير","ملعب","بطانية","طبل","فراشة","حديقة","يجري","تكتب","تسقي","تقود","تركل","تأكل","سكين","يطرق","زهور","ظرف","ظفر","ظبي","ظلام","خيار","خنجر","خاتم","صخرة","هدهد","لمبة","لسان","لحمة","لحن","نهر","زر","زبدة","ضرس","هرم","ذهب","ضماد","ذيل","غراب","غواصة","غابة","رمل","رجل","رمان","ضحك","قفل","فقمة","سرطان"];
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+// Filter words by random letter
+let pool = [];
+for(let i=0; i<animals_ar.length; i++) {
+    if(animals_ar[i][0] === alphabet[randl]) {
+        pool.push({ ar: animals_ar[i], en: animals_en[i] });
+    }
+}
+
+// Fallback if no words start with that letter
+if(pool.length < 4) {
+    pool = [];
+    for(let i=0; i<4; i++) pool.push({ ar: animals_ar[i], en: animals_en[i] });
+}
+
+shuffle(pool);
+let selected = pool.slice(0, 4);
+
+// Create randomized lists
+let wordOrder = shuffle([...selected]);
+let imgOrder = shuffle([...selected]);
+
+const animalList = document.getElementById("animals");
+const imageDiv = document.getElementById("images");
+
+wordOrder.forEach(item => {
+    let li = document.createElement("li");
+    li.textContent = item.ar;
+    li.id = item.en;
+    li.draggable = true;
+    li.addEventListener('dragstart', (e) => e.dataTransfer.setData("text", e.target.id));
+    
+    // Mobile Touch Events
+    li.addEventListener('touchstart', handleTouchStart, false);
+    li.addEventListener('touchmove', handleTouchMove, false);
+    li.addEventListener('touchend', handleTouchEnd, false);
+    
+    animalList.appendChild(li);
+});
+
+imgOrder.forEach(item => {
+    let img = document.createElement("img");
+    img.src = item.en + ".jpg";
+    img.id = item.en + "target";
+    img.addEventListener('dragover', (e) => e.preventDefault());
+    img.addEventListener('drop', handleDrop);
+    imageDiv.appendChild(img);
+});
+
+let correctCount = 0;
+
+function handleDrop(e) {
+    e.preventDefault();
+    let draggedId = e.dataTransfer.getData("text");
+    checkMatch(draggedId, e.target);
+}
+
+function checkMatch(draggedId, targetElement) {
+    if (targetElement.id === draggedId + "target") {
+        targetElement.style.border = "8px solid green";
+        document.getElementById(draggedId).style.visibility = "hidden";
+        document.getElementById("myAudio").play();
+        correctCount++;
+        if(correctCount === 4) setTimeout(() => location.reload(), 2000);
+    } else {
+        targetElement.style.border = "8px solid red";
+        document.getElementById("myAudio2").play();
+    }
+}
+
+// Touch Handling Logic
+let activeItem = null;
+
+function handleTouchStart(e) {
+    activeItem = e.target;
+}
+
+function handleTouchMove(e) {
+    e.preventDefault(); // Prevent scrolling
+    let touch = e.touches[0];
+    activeItem.style.position = 'absolute';
+    activeItem.style.left = touch.pageX - 60 + 'px';
+    activeItem.style.top = touch.pageY - 30 + 'px';
+}
+
+function handleTouchEnd(e) {
+    let touch = e.changedTouches[0];
+    activeItem.style.display = 'none'; // Temporarily hide to find element underneath
+    let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    activeItem.style.display = 'block';
+    activeItem.style.position = 'static';
+
+    if (dropTarget && dropTarget.tagName === 'IMG') {
+        checkMatch(activeItem.id, dropTarget);
+    }
+}
+</script>
 </body>
-</html> 
+</html>
