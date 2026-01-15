@@ -11,17 +11,30 @@
             background-color: #c2c6b3;
             margin: 0;
             padding: 10px;
-            touch-action: manipulation; /* Prevents zooming while dragging */
+            touch-action: manipulation;
+        }
+
+        /* Scorer Styling */
+        #score-board {
+            background: #484111;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            margin: 10px auto;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            min-width: 150px;
         }
 
         .container {
             display: flex;
-            flex-direction: row-reverse; /* Arabic alignment */
+            flex-direction: row-reverse;
             justify-content: space-around;
             align-items: flex-start;
             flex-wrap: wrap;
             gap: 20px;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         ul {
@@ -42,7 +55,8 @@
             border-radius: 10px;
             cursor: grab;
             user-select: none;
-            touch-action: none; /* Required for mobile drag script */
+            touch-action: none;
+            transition: transform 0.2s;
         }
 
         #images {
@@ -58,9 +72,9 @@
             border-radius: 15px;
             background: #3A6F9A;
             object-fit: cover;
+            transition: border 0.3s;
         }
 
-        /* Mobile specific adjustments */
         @media (max-width: 600px) {
             li { width: 100px; font-size: 1.2rem; }
             img { width: 100px; height: 100px; }
@@ -69,6 +83,10 @@
 </head>
 
 <body>
+
+<div id="score-board">
+    النقاط: <span id="score">0</span>
+</div>
 
 <audio id="myAudio"><source src="bravo.m4a" type="audio/mpeg"></audio>
 <audio id="myAudio2"><source src="error.m4a" type="audio/mpeg"></audio>
@@ -89,7 +107,6 @@ function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-// Filter words by random letter
 let pool = [];
 for(let i=0; i<animals_ar.length; i++) {
     if(animals_ar[i][0] === alphabet[randl]) {
@@ -97,7 +114,6 @@ for(let i=0; i<animals_ar.length; i++) {
     }
 }
 
-// Fallback if no words start with that letter
 if(pool.length < 4) {
     pool = [];
     for(let i=0; i<4; i++) pool.push({ ar: animals_ar[i], en: animals_en[i] });
@@ -106,12 +122,12 @@ if(pool.length < 4) {
 shuffle(pool);
 let selected = pool.slice(0, 4);
 
-// Create randomized lists
 let wordOrder = shuffle([...selected]);
 let imgOrder = shuffle([...selected]);
 
 const animalList = document.getElementById("animals");
 const imageDiv = document.getElementById("images");
+const scoreDisplay = document.getElementById("score");
 
 wordOrder.forEach(item => {
     let li = document.createElement("li");
@@ -119,12 +135,9 @@ wordOrder.forEach(item => {
     li.id = item.en;
     li.draggable = true;
     li.addEventListener('dragstart', (e) => e.dataTransfer.setData("text", e.target.id));
-    
-    // Mobile Touch Events
     li.addEventListener('touchstart', handleTouchStart, false);
     li.addEventListener('touchmove', handleTouchMove, false);
     li.addEventListener('touchend', handleTouchEnd, false);
-    
     animalList.appendChild(li);
 });
 
@@ -138,6 +151,15 @@ imgOrder.forEach(item => {
 });
 
 let correctCount = 0;
+let totalScore = 0;
+
+function updateScore(points) {
+    totalScore += points;
+    scoreDisplay.textContent = totalScore;
+    // Simple animation effect
+    scoreDisplay.parentElement.style.transform = "scale(1.2)";
+    setTimeout(() => { scoreDisplay.parentElement.style.transform = "scale(1)"; }, 200);
+}
 
 function handleDrop(e) {
     e.preventDefault();
@@ -147,39 +169,42 @@ function handleDrop(e) {
 
 function checkMatch(draggedId, targetElement) {
     if (targetElement.id === draggedId + "target") {
-        targetElement.style.border = "8px solid green";
+        targetElement.style.border = "8px solid #2ecc71";
+        targetElement.style.pointerEvents = "none"; // Disable further drops on this image
         document.getElementById(draggedId).style.visibility = "hidden";
         document.getElementById("myAudio").play();
+        
+        updateScore(10);
         correctCount++;
-        if(correctCount === 4) setTimeout(() => location.reload(), 2000);
+        
+        if(correctCount === 4) {
+            scoreDisplay.textContent = "ممتاز! " + totalScore;
+            setTimeout(() => location.reload(), 2500);
+        }
     } else {
-        targetElement.style.border = "8px solid red";
+        targetElement.style.border = "8px solid #e74c3c";
         document.getElementById("myAudio2").play();
+        // Optional: penalty for wrong answer
+        // updateScore(-2); 
     }
 }
 
-// Touch Handling Logic
 let activeItem = null;
-
-function handleTouchStart(e) {
-    activeItem = e.target;
-}
-
+function handleTouchStart(e) { activeItem = e.target; }
 function handleTouchMove(e) {
-    e.preventDefault(); // Prevent scrolling
+    e.preventDefault();
     let touch = e.touches[0];
     activeItem.style.position = 'absolute';
+    activeItem.style.zIndex = '1000';
     activeItem.style.left = touch.pageX - 60 + 'px';
     activeItem.style.top = touch.pageY - 30 + 'px';
 }
-
 function handleTouchEnd(e) {
     let touch = e.changedTouches[0];
-    activeItem.style.display = 'none'; // Temporarily hide to find element underneath
+    activeItem.style.display = 'none';
     let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
     activeItem.style.display = 'block';
     activeItem.style.position = 'static';
-
     if (dropTarget && dropTarget.tagName === 'IMG') {
         checkMatch(activeItem.id, dropTarget);
     }
