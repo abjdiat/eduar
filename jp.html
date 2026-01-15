@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Japanese Kana Flashcards - Randomized</title>
+<style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f0f4f8;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  h1 {
+    color: #1a3c5e;
+    margin-bottom: 10px;
+  }
+  #controls {
+    margin: 20px 0;
+    text-align: center;
+  }
+  button {
+    padding: 10px 20px;
+    margin: 0 8px 8px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    background: #2c7be5;
+    color: white;
+    transition: background 0.2s;
+  }
+  button:hover { background: #1e63c5; }
+  button:disabled { background: #bdc3c7; cursor: not-allowed; }
+
+  #card-container {
+    perspective: 1000px;
+    width: 320px;
+    height: 440px;
+    margin: 25px 0;
+  }
+
+  #card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  #card.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .front {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  }
+
+  .back {
+    background: linear-gradient(135deg, #ffffff, #f0f4f8);
+    transform: rotateY(180deg);
+  }
+
+  #kana-front {
+    font-size: 40pt;
+    font-weight: bold;
+    margin: 0;
+    color: #1a3c5e;
+    line-height: 1;
+  }
+
+  #kana-back {
+    font-size: 48pt;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+    color: #1a3c5e;
+  }
+
+  #romaji {
+    font-size: 3.8rem;
+    color: #d32f2f;
+    margin: 0;
+    font-weight: bold;
+  }
+
+  #type-label {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: #2e7d32;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: bold;
+  }
+
+  #progress-container {
+    width: 320px;
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+
+  #progress-bar {
+    width: 0%;
+    height: 100%;
+    background: #4caf50;
+    transition: width 0.4s ease;
+  }
+
+  #progress-text {
+    font-size: 1.05rem;
+    color: #546e7a;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Japanese Kana Flashcards</h1>
+
+<div id="controls">
+  <button id="btn-hiragana">Hiragana only</button>
+  <button id="btn-katakana">Katakana only</button>
+  <button id="btn-both">Both</button>
+  <br>
+  <button id="btn-prev">← Previous</button>
+  <button id="btn-next">Next →</button>
+</div>
+
+<div id="card-container">
+  <div id="card">
+    <div class="card-face front" id="front">
+      <div id="type-label"></div>
+      <div id="kana-front"></div>
+    </div>
+    <div class="card-face back" id="back">
+      <div id="type-label-back"></div>
+      <div id="kana-back"></div>
+      <div id="romaji"></div>
+    </div>
+  </div>
+</div>
+
+<div id="progress-container">
+  <div id="progress-bar"></div>
+</div>
+<div id="progress-text"></div>
+
+<script>
+// Data
+const kanaData = [
+  // Hiragana
+  { char: "あ", romaji: "a",   type: "hiragana" }, { char: "い", romaji: "i",   type: "hiragana" },
+  { char: "う", romaji: "u",   type: "hiragana" }, { char: "え", romaji: "e",   type: "hiragana" },
+  { char: "お", romaji: "o",   type: "hiragana" },
+  { char: "か", romaji: "ka",  type: "hiragana" }, { char: "き", romaji: "ki",  type: "hiragana" },
+  { char: "く", romaji: "ku",  type: "hiragana" }, { char: "け", romaji: "ke",  type: "hiragana" },
+  { char: "こ", romaji: "ko",  type: "hiragana" },
+  { char: "さ", romaji: "sa",  type: "hiragana" }, { char: "し", romaji: "shi", type: "hiragana" },
+  { char: "す", romaji: "su",  type: "hiragana" }, { char: "せ", romaji: "se",  type: "hiragana" },
+  { char: "そ", romaji: "so",  type: "hiragana" },
+  { char: "た", romaji: "ta",  type: "hiragana" }, { char: "ち", romaji: "chi", type: "hiragana" },
+  { char: "つ", romaji: "tsu", type: "hiragana" }, { char: "て", romaji: "te",  type: "hiragana" },
+  { char: "と", romaji: "to",  type: "hiragana" },
+  { char: "な", romaji: "na",  type: "hiragana" }, { char: "に", romaji: "ni",  type: "hiragana" },
+  { char: "ぬ", romaji: "nu",  type: "hiragana" }, { char: "ね", romaji: "ne",  type: "hiragana" },
+  { char: "の", romaji: "no",  type: "hiragana" },
+  { char: "は", romaji: "ha",  type: "hiragana" }, { char: "ひ", romaji: "hi",  type: "hiragana" },
+  { char: "ふ", romaji: "fu",  type: "hiragana" }, { char: "へ", romaji: "he",  type: "hiragana" },
+  { char: "ほ", romaji: "ho",  type: "hiragana" },
+  { char: "ま", romaji: "ma",  type: "hiragana" }, { char: "み", romaji: "mi",  type: "hiragana" },
+  { char: "む", romaji: "mu",  type: "hiragana" }, { char: "め", romaji: "me",  type: "hiragana" },
+  { char: "も", romaji: "mo",  type: "hiragana" },
+  { char: "や", romaji: "ya",  type: "hiragana" }, { char: "ゆ", romaji: "yu",  type: "hiragana" },
+  { char: "よ", romaji: "yo",  type: "hiragana" },
+  { char: "ら", romaji: "ra",  type: "hiragana" }, { char: "り", romaji: "ri",  type: "hiragana" },
+  { char: "る", romaji: "ru",  type: "hiragana" }, { char: "れ", romaji: "re",  type: "hiragana" },
+  { char: "ろ", romaji: "ro",  type: "hiragana" },
+  { char: "わ", romaji: "wa",  type: "hiragana" }, { char: "を", romaji: "wo",  type: "hiragana" },
+  { char: "ん", romaji: "n",   type: "hiragana" },
+  // Katakana
+  { char: "ア", romaji: "a",   type: "katakana" }, { char: "イ", romaji: "i",   type: "katakana" },
+  { char: "ウ", romaji: "u",   type: "katakana" }, { char: "エ", romaji: "e",   type: "katakana" },
+  { char: "オ", romaji: "o",   type: "katakana" },
+  { char: "カ", romaji: "ka",  type: "katakana" }, { char: "キ", romaji: "ki",  type: "katakana" },
+  { char: "ク", romaji: "ku",  type: "katakana" }, { char: "ケ", romaji: "ke",  type: "katakana" },
+  { char: "コ", romaji: "ko",  type: "katakana" },
+  { char: "サ", romaji: "sa",  type: "katakana" }, { char: "シ", romaji: "shi", type: "katakana" },
+  { char: "ス", romaji: "su",  type: "katakana" }, { char: "セ", romaji: "se",  type: "katakana" },
+  { char: "ソ", romaji: "so",  type: "katakana" },
+  { char: "タ", romaji: "ta",  type: "katakana" }, { char: "チ", romaji: "chi", type: "katakana" },
+  { char: "ツ", romaji: "tsu", type: "katakana" }, { char: "テ", romaji: "te",  type: "katakana" },
+  { char: "ト", romaji: "to",  type: "katakana" },
+  { char: "ナ", romaji: "na",  type: "katakana" }, { char: "ニ", romaji: "ni",  type: "katakana" },
+  { char: "ヌ", romaji: "nu",  type: "katakana" }, { char: "ネ", romaji: "ne",  type: "katakana" },
+  { char: "ノ", romaji: "no",  type: "katakana" },
+  { char: "ハ", romaji: "ha",  type: "katakana" }, { char: "ヒ", romaji: "hi",  type: "katakana" },
+  { char: "フ", romaji: "fu",  type: "katakana" }, { char: "ヘ", romaji: "he",  type: "katakana" },
+  { char: "ホ", romaji: "ho",  type: "katakana" },
+  { char: "マ", romaji: "ma",  type: "katakana" }, { char: "ミ", romaji: "mi",  type: "katakana" },
+  { char: "ム", romaji: "mu",  type: "katakana" }, { char: "メ", romaji: "me",  type: "katakana" },
+  { char: "モ", romaji: "mo",  type: "katakana" },
+  { char: "ヤ", romaji: "ya",  type: "katakana" }, { char: "ユ", romaji: "yu",  type: "katakana" },
+  { char: "ヨ", romaji: "yo",  type: "katakana" },
+  { char: "ラ", romaji: "ra",  type: "katakana" }, { char: "リ", romaji: "ri",  type: "katakana" },
+  { char: "ル", romaji: "ru",  type: "katakana" }, { char: "レ", romaji: "re",  type: "katakana" },
+  { char: "ロ", romaji: "ro",  type: "katakana" },
+  { char: "ワ", romaji: "wa",  type: "katakana" }, { char: "ヲ", romaji: "wo",  type: "katakana" },
+  { char: "ン", romaji: "n",   type: "katakana" },
+];
+
+let currentIndex = 0;
+let currentMode = "both";
+let isFlipped = false;
+let shuffledCards = [];
+
+const card       = document.getElementById("card");
+const front      = document.getElementById("front");
+const back       = document.getElementById("back");
+const kanaFront  = document.getElementById("kana-front");
+const kanaBack   = document.getElementById("kana-back");
+const romajiEl   = document.getElementById("romaji");
+const typeLabelF = document.getElementById("type-label");
+const typeLabelB = document.getElementById("type-label-back");
+const progressBar = document.getElementById("progress-bar");
+const progressText = document.getElementById("progress-text");
+
+const btnPrev = document.getElementById("btn-prev");
+const btnNext = document.getElementById("btn-next");
+
+// Shuffle array (Fisher-Yates)
+function shuffle(array) {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function getFilteredCards() {
+  if (currentMode === "hiragana") return kanaData.filter(c => c.type === "hiragana");
+  if (currentMode === "katakana") return kanaData.filter(c => c.type === "katakana");
+  return [...kanaData];
+}
+
+function reshuffleAndUpdate() {
+  const filtered = getFilteredCards();
+  shuffledCards = shuffle(filtered);
+  currentIndex = 0;
+  updateCard();
+}
+
+function updateCard() {
+  if (shuffledCards.length === 0) return;
+
+  const item = shuffledCards[currentIndex];
+
+  kanaFront.textContent = item.char;
+  kanaBack.textContent  = item.char;
+  romajiEl.textContent  = item.romaji;
+
+  const labelText = item.type === "hiragana" ? "HIRAGANA" : "KATAKANA";
+  typeLabelF.textContent = labelText;
+  typeLabelB.textContent = labelText;
+
+  typeLabelF.style.background = item.type === "hiragana" ? "#2e7d32" : "#6a1b9a";
+  typeLabelB.style.background = item.type === "hiragana" ? "#2e7d32" : "#6a1b9a";
+
+  const progressPercent = ((currentIndex + 1) / shuffledCards.length) * 100;
+  progressBar.style.width = `${progressPercent}%`;
+  progressText.textContent = `Card ${currentIndex + 1} of ${shuffledCards.length}`;
+
+  if (isFlipped) {
+    card.classList.remove("flipped");
+    isFlipped = false;
+  }
+}
+
+function flipCard() {
+  card.classList.toggle("flipped");
+  isFlipped = !isFlipped;
+}
+
+function nextCard() {
+  currentIndex = (currentIndex + 1) % shuffledCards.length;
+  updateCard();
+}
+
+function prevCard() {
+  currentIndex = (currentIndex - 1 + shuffledCards.length) % shuffledCards.length;
+  updateCard();
+}
+
+// Events
+card.addEventListener("click", flipCard);
+
+window.addEventListener("keydown", e => {
+  if (e.key === " " || e.key === "Enter") {
+    e.preventDefault();
+    flipCard();
+  }
+  else if (e.key === "ArrowRight") nextCard();
+  else if (e.key === "ArrowLeft") prevCard();
+});
+
+btnNext.addEventListener("click", nextCard);
+btnPrev.addEventListener("click", prevCard);
+
+// Mode switches → reshuffle
+document.getElementById("btn-hiragana").onclick = () => { currentMode = "hiragana"; reshuffleAndUpdate(); };
+document.getElementById("btn-katakana").onclick = () => { currentMode = "katakana"; reshuffleAndUpdate(); };
+document.getElementById("btn-both").onclick    = () => { currentMode = "both";    reshuffleAndUpdate(); };
+
+// Initial load
+reshuffleAndUpdate();
+</script>
+</body>
+</html>
