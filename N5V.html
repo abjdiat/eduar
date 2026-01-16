@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Japanese Verbs - 79 Flashcards</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e74c3c;
+            --bg: #f0f2f5;
+            --card-w: 380px;
+            --card-h: 480px;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container { width: 100%; max-width: var(--card-w); text-align: center; }
+
+        .flashcard {
+            perspective: 1000px;
+            width: 100%;
+            height: var(--card-h);
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-radius: 25px;
+        }
+
+        .flashcard.flipped .card-inner { transform: rotateY(180deg); }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 25px;
+            background: white;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+
+        /* Front Styling */
+        .verb-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            background: #eee;
+        }
+
+        .kanji { font-size: 4.5rem; color: var(--primary); margin: 0; }
+
+        /* Back Styling */
+        .card-back { transform: rotateY(180deg); background: #fffdf5; justify-content: center; }
+        .furi { font-size: 1.8rem; color: var(--accent); font-weight: bold; }
+        .romaji { color: #95a5a6; margin-bottom: 15px; }
+        .meaning { font-size: 1.8rem; font-weight: bold; color: var(--primary); margin-bottom: 20px; border-bottom: 3px solid var(--accent); padding-bottom: 5px; }
+        .example-box { background: #fdf2f0; padding: 15px; border-radius: 12px; width: 100%; text-align: left; border-left: 5px solid var(--accent); }
+        .ex-jp { display: block; font-size: 1.1rem; margin-bottom: 5px; }
+        .ex-en { font-size: 0.9rem; color: #555; font-style: italic; }
+
+        .nav-buttons { display: flex; gap: 10px; justify-content: center; }
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.95); }
+        .counter { margin-top: 20px; font-weight: bold; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="flashcard" id="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-face card-front">
+                <img id="imgDisplay" class="verb-img" src="" alt="loading...">
+                <h1 class="kanji" id="kanji"></h1>
+            </div>
+            <div class="card-back">
+                <div class="furi" id="furi"></div>
+                <div class="romaji" id="romaji"></div>
+                <div class="meaning" id="mean"></div>
+                <div class="example-box">
+                    <span class="ex-jp" id="exJp"></span>
+                    <span class="ex-en" id="exEn"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button onclick="changeCard(-1); event.stopPropagation();">PREV</button>
+        <button onclick="shuffle(); event.stopPropagation();" style="background:#7f8c8d">SHUFFLE</button>
+        <button onclick="changeCard(1); event.stopPropagation();">NEXT</button>
+    </div>
+
+    <div class="counter">Card <span id="cur">1</span> / 79</div>
+</div>
+
+<script>
+const verbs = [
+    {k: "会う", f: "あう", r: "au", m: "to meet", ej: "友だちに会います。", ee: "I will meet a friend.", i: "meeting"},
+    {k: "開く", f: "あく", r: "aku", m: "to open", ej: "ドアが開きます。", ee: "The door opens.", i: "door-opening"},
+    {k: "開ける", f: "あける", r: "akeru", m: "to open", ej: "窓を開けます。", ee: "I open the window.", i: "window-open"},
+    {k: "あげる", f: "あげる", r: "ageru", m: "to give", ej: "花をあげます。", ee: "I give flowers.", i: "giving-gift"},
+    {k: "遊ぶ", f: "あそぶ", r: "asobu", m: "to play", ej: "子供が遊びます。", ee: "The child plays.", i: "playing"},
+    {k: "浴びる", f: "あびる", r: "abiru", m: "to take a shower", ej: "シャワーを浴びる。", ee: "Take a shower.", i: "shower"},
+    {k: "洗う", f: "あらう", r: "arau", m: "to wash", ej: "皿を洗います。", ee: "I wash the dishes.", i: "washing-hands"},
+    {k: "有る", f: "ある", r: "aru", m: "to exist (item)", ej: "本が有ります。", ee: "There is a book.", i: "objects"},
+    {k: "ある", f: "ある", r: "aru", m: "to possess", ej: "時間が有る。", ee: "I have time.", i: "clock"},
+    {k: "歩く", f: "あるく", r: "aruku", m: "to walk", ej: "外を歩きます。", ee: "I walk outside.", i: "walking"},
+    {k: "言う", f: "いう", r: "iu", m: "to say", ej: "名前を言います。", ee: "I say my name.", i: "speaking"},
+    {k: "行く", f: "いく", r: "iku", m: "to go", ej: "学校へ行きます。", ee: "I go to school.", i: "travel"},
+    {k: "いる", f: "いる", r: "iru", m: "to need", ej: "お金がいります。", ee: "I need money.", i: "need"},
+    {k: "居る", f: "いる", r: "iru", m: "to exist (person)", ej: "猫がいます。", ee: "There is a cat.", i: "cat"},
+    {k: "入れる", f: "いれる", r: "ireru", m: "to put in", ej: "カバンに入れます。", ee: "I put it in the bag.", i: "insert"},
+    {k: "歌う", f: "うたう", r: "utau", m: "to sing", ej: "歌を歌います。", ee: "I sing a song.", i: "singing"},
+    {k: "生まれる", f: "うまれる", r: "umareru", m: "to be born", ej: "赤ちゃんが生まれた。", ee: "A baby was born.", i: "baby"},
+    {k: "売る", f: "うる", r: "uru", m: "to sell", ej: "本を売ります。", ee: "I sell books.", i: "selling"},
+    {k: "起きる", f: "おきる", r: "okiru", m: "to wake up", ej: "６時に起きます。", ee: "I wake up at 6.", i: "wake-up"},
+    {k: "置く", f: "おく", r: "oku", m: "to put", ej: "机に置きます。", ee: "I put it on the desk.", i: "placing"},
+    {k: "送る", f: "おくる", r: "okuru", m: "to send", ej: "手紙を送ります。", ee: "I send a letter.", i: "mail"},
+    {k: "押す", f: "おす", r: "osu", m: "to push", ej: "ボタンを押す。", ee: "Push the button.", i: "push"},
+    {k: "覚える", f: "おぼえる", r: "oboeru", m: "to memorize", ej: "漢字を覚えます。", ee: "I memorize Kanji.", i: "studying"},
+    {k: "泳ぐ", f: "およぐ", r: "oyogu", m: "to swim", ej: "海で泳ぎます。", ee: "I swim in the sea.", i: "swimming"},
+    {k: "降りる", f: "おりる", r: "oriru", m: "to get off", ej: "バスを降ります。", ee: "I get off the bus.", i: "get-off-bus"},
+    {k: "終わる", f: "おわる", r: "owaru", m: "to end", ej: "映画が終わる。", ee: "The movie ends.", i: "finish"},
+    {k: "買う", f: "かう", r: "kau", m: "to buy", ej: "服を買います。", ee: "I buy clothes.", i: "shopping"},
+    {k: "返す", f: "かえす", r: "kaesu", m: "to return", ej: "本を返します。", ee: "I return the book.", i: "giving-back"},
+    {k: "帰る", f: "かえる", r: "kaeru", m: "to go home", ej: "家に帰ります。", ee: "I go home.", i: "home"},
+    {k: "かかる", f: "かかる", r: "kakaru", m: "to take time/money", ej: "１時間かかります。", ee: "It takes one hour.", i: "clock-time"},
+    {k: "書く", f: "かく", r: "kaku", m: "to write", ej: "日記を書きます。", ee: "I write a diary.", i: "writing"},
+    {k: "かける", f: "かける", r: "kakeru", m: "to wear (glasses)", ej: "眼鏡をかける。", ee: "I put on glasses.", i: "glasses"},
+    {k: "かける", f: "かける", r: "kakeru", m: "to call", ej: "電話をかけます。", ee: "I make a phone call.", i: "phone"},
+    {k: "貸す", f: "かす", r: "kasu", m: "to lend", ej: "ペンを貸します。", ee: "I lend a pen.", i: "sharing"},
+    {k: "冠る", f: "かぶる", r: "kaburu", m: "to wear (hat)", ej: "帽子を被る。", ee: "I put on a hat.", i: "wearing-hat"},
+    {k: "借りる", f: "かりる", r: "kariru", m: "to borrow", ej: "本を借りました。", ee: "I borrowed a book.", i: "borrowing"},
+    {k: "消える", f: "きえる", r: "kieru", m: "to vanish", ej: "電気が消えました。", ee: "The light went out.", i: "darkness"},
+    {k: "聞く", f: "きく", r: "kiku", m: "to listen", ej: "音楽を聞きます。", ee: "I listen to music.", i: "headphones"},
+    {k: "切る", f: "きる", r: "kiru", m: "to cut", ej: "紙を切ります。", ee: "I cut the paper.", i: "scissors"},
+    {k: "着る", f: "きる", r: "kiru", m: "to wear (shirt)", ej: "シャツを着ます。", ee: "I put on a shirt.", i: "clothes"},
+    {k: "来る", f: "くる", r: "kuru", m: "to come", ej: "友達が来ます。", ee: "A friend is coming.", i: "welcome"},
+    {k: "消す", f: "けす", r: "kesu", m: "to turn off", ej: "テレビを消す。", ee: "Turn off the TV.", i: "remote"},
+    {k: "答える", f: "こたえる", r: "kotaeru", m: "to answer", ej: "質問に答える。", ee: "Answer the question.", i: "answer"},
+    {k: "困る", f: "こまる", r: "komaru", m: "to be in trouble", ej: "道に迷って困る。", ee: "Lost and in trouble.", i: "confusion"},
+    {k: "咲く", f: "さく", r: "saku", m: "to blossom", ej: "花が咲きました。", ee: "The flowers bloomed.", i: "flower"},
+    {k: "さす", f: "さす", r: "sasu", m: "to open (umbrella)", ej: "傘をさします。", ee: "I open an umbrella.", i: "umbrella"},
+    {k: "死ぬ", f: "しぬ", r: "shinu", m: "to die", ej: "魚が死んだ。", ee: "The fish died.", i: "grave"},
+    {k: "閉まる", f: "しまる", r: "shimaru", m: "to close", ej: "店が閉まる。", ee: "The shop closes.", i: "closed-sign"},
+    {k: "閉める", f: "しめる", r: "shimeru", m: "to close", ej: "窓を閉めます。", ee: "I close the window.", i: "closing-window"},
+    {k: "締める", f: "しめる", r: "shimeru", m: "to fasten", ej: "ベルトを締める。", ee: "Fasten the belt.", i: "belt"},
+    {k: "知る", f: "しる", r: "shiru", m: "to know", ej: "彼を知っています。", ee: "I know him.", i: "knowledge"},
+    {k: "吸う", f: "すう", r: "suu", m: "to smoke/inhale", ej: "空気を吸います。", ee: "I breathe air.", i: "breath"},
+    {k: "住む", f: "すむ", r: "sumu", m: "to live", ej: "東京に住む。", ee: "Live in Tokyo.", i: "house"},
+    {k: "する", f: "する", r: "suru", m: "to do", ej: "テニスをする。", ee: "Play tennis.", i: "sports"},
+    {k: "座る", f: "すわる", r: "suwaru", m: "to sit", ej: "椅子に座る。", ee: "Sit in a chair.", i: "sitting"},
+    {k: "出す", f: "だす", r: "dasu", m: "to take out", ej: "ゴミを出す。", ee: "Take out the trash.", i: "trash"},
+    {k: "立つ", f: "たつ", r: "tatsu", m: "to stand", ej: "あそこに立つ。", ee: "Stand over there.", i: "standing"},
+    {k: "頼む", f: "たのむ", r: "tanomu", m: "to ask", ej: "助けを頼みます。", ee: "I ask for help.", i: "pray"},
+    {k: "食べる", f: "たべる", r: "taberu", m: "to eat", ej: "朝ご飯を食べる。", ee: "Eat breakfast.", i: "eating"},
+    {k: "違う", f: "ちがう", r: "chigau", m: "to be different", ej: "色が違います。", ee: "The colors are different.", i: "different"},
+    {k: "使う", f: "つかう", r: "tsukau", m: "to use", ej: "スマホを使う。", ee: "Use a smartphone.", i: "using"},
+    {k: "疲れる", f: "つかれる", r: "tsukareru", m: "to get tired", ej: "仕事で疲れた。", ee: "Tired from work.", i: "tired"},
+    {k: "着く", f: "つく", r: "tsuku", m: "to arrive", ej: "駅に着きました。", ee: "Arrived at the station.", i: "arrival"},
+    {k: "作る", f: "つくる", r: "tsukuru", m: "to make", ej: "料理を作る。", ee: "Make a meal.", i: "cooking"},
+    {k: "点ける", f: "つける", r: "tsukeru", m: "to turn on", ej: "電気を点ける。", ee: "Turn on the light.", i: "lightbulb"},
+    {k: "勤める", f: "つとめる", r: "tsutomeru", m: "to work for", ej: "銀行に勤める。", ee: "Work for a bank.", i: "office"},
+    {k: "出かける", f: "でかける", r: "dekakeru", m: "to go out", ej: "午後に出かける。", ee: "Go out in the afternoon.", i: "leaving-house"},
+    {k: "出来る", f: "できる", r: "dekiru", m: "can do", ej: "料理が出来る。", ee: "I can cook.", i: "success"},
+    {k: "出る", f: "でる", r: "deru", m: "to leave", ej: "部屋を出ます。", ee: "I leave the room.", i: "exit"},
+    {k: "飛ぶ", f: "とぶ", r: "tobu", m: "to fly", ej: "鳥が飛びます。", ee: "The bird flies.", i: "bird"},
+    {k: "止まる", f: "とまる", r: "tomaru", m: "to stop", ej: "車が止まる。", ee: "The car stops.", i: "stop"},
+    {k: "取る", f: "とる", r: "toru", m: "to take", ej: "ペンを取る。", ee: "Take a pen.", i: "taking"},
+    {k: "撮る", f: "とる", r: "toru", m: "to take a photo", ej: "写真を撮る。", ee: "Take a photo.", i: "camera"},
+    {k: "鳴く", f: "なく", r: "naku", m: "to sing (animal)", ej: "鳥が鳴く。", ee: "The bird chirps.", i: "animal-sound"},
+    {k: "並ぶ", f: "ならぶ", r: "narabu", m: "to form a line", ej: "列に並ぶ。", ee: "Stand in line.", i: "queue"},
+    {k: "並べる", f: "ならべる", r: "naraberu", m: "to line up", ej: "本を並べます。", ee: "Line up the books.", i: "shelf"},
+    {k: "なる", f: "なる", r: "naru", m: "to become", ej: "医者になります。", ee: "Become a doctor.", i: "growth"},
+    {k: "脱ぐ", f: "ぬぐ", r: "nugu", m: "to take off", ej: "靴を脱ぐ。", ee: "Take off shoes.", i: "taking-off-shoes"},
+    {k: "寝る", f: "ねる", r: "neru", m: "to sleep", ej: "ベッドで寝る。", ee: "Sleep in bed.", i: "sleeping"},
+    {k: "登る", f: "のぼる", r: "noboru", m: "to climb", ej: "山に登る。", ee: "Climb a mountain.", i: "climbing"},
+    {k: "飲む", f: "のむ", r: "nomu", m: "to drink", ej: "水を飲みます。", ee: "Drink water.", i: "drinking"},
+    {k: "乗る", f: "のる", r: "noru", m: "to ride", ej: "電車に乗る。", ee: "Ride the train.", i: "train"},
+    {k: "入る", f: "はいる", r: "hairu", m: "to enter", ej: "中に入る。", ee: "Enter inside.", i: "entrance"},
+    {k: "履く", f: "はく", r: "haku", m: "to wear (feet)", ej: "靴を履く。", ee: "Put on shoes.", i: "shoes"},
+    {k: "始まる", f: "はじまる", r: "hajimaru", m: "to begin", ej: "会議が始まる。", ee: "The meeting begins.", i: "start"},
+    {k: "走る", f: "はしる", r: "hashiru", m: "to run", ej: "公園を走る。", ee: "Run in the park.", i: "running"},
+    {k: "働く", f: "はたらく", r: "hataraku", m: "to work", ej: "外で働く。", ee: "Work outside.", i: "working"},
+    {k: "話す", f: "はなす", r: "hanasu", m: "to speak", ej: "英語で話す。", ee: "Speak in English.", i: "talking"},
+    {k: "張る", f: "はる", r: "haru", m: "to stick/post", ej: "ポスターを張る。", ee: "Post a poster.", i: "poster"},
+    {k: "晴れる", f: "はれる", r: "hareru", m: "to clear up", ej: "明日晴れる。", ee: "It will be sunny tomorrow.", i: "sunny"},
+    {k: "引く", f: "ひく", r: "hiku", m: "to pull", ej: "ドアを引く。", ee: "Pull the door.", i: "pull"},
+    {k: "弾く", f: "ひく", r: "hiku", m: "to play (instrument)", ej: "ピアノを弾く。", ee: "Play the piano.", i: "piano"},
+    {k: "吹く", f: "ふく", r: "fuku", m: "to blow", ej: "風が吹く。", ee: "The wind blows.", i: "wind"},
+    {k: "降る", f: "ふる", r: "furu", m: "to fall (rain)", ej: "雨が降る。", ee: "It is raining.", i: "rain"},
+    {k: "曲がる", f: "まがる", r: "magaru", m: "to turn", ej: "右に曲がる。", ee: "Turn right.", i: "turn-right"},
+    {k: "待つ", f: "まつ", r: "matsu", m: "to wait", ej: "バスを待つ。", ee: "Wait for the bus.", i: "waiting"},
+    {k: "磨く", f: "みがく", r: "migaku", m: "to brush", ej: "歯を磨く。", ee: "Brush teeth.", i: "toothbrush"},
+    {k: "見せる", f: "みせる", r: "miseru", m: "to show", ej: "写真を見せる。", ee: "Show the photo.", i: "showing"},
+    {k: "見る", f: "みる", r: "miru", m: "to see", ej: "景色を見る。", ee: "Look at the scenery.", i: "scenery"},
+    {k: "持つ", f: "もつ", r: "motsu", m: "to hold", ej: "荷物を持つ。", ee: "Hold the luggage.", i: "holding"},
+    {k: "休む", f: "やすむ", r: "yasumu", m: "to rest", ej: "少し休みます。", ee: "I will rest a bit.", i: "resting"},
+    {k: "やる", f: "やる", r: "yaru", m: "to do", ej: "宿題をやる。", ee: "Do homework.", i: "writing"},
+    {k: "呼ぶ", f: "よぶ", r: "yobu", m: "to call/invite", ej: "タクシーを呼ぶ。", ee: "Call a taxi.", i: "calling"},
+    {k: "読む", f: "よむ", r: "yomu", m: "to read", ej: "本を読む。", ee: "Read a book.", i: "reading-book"},
+    {k: "分かる", f: "わかる", r: "wakaru", m: "to understand", ej: "意味が分かる。", ee: "Understand the meaning.", i: "logic"},
+    {k: "忘れる", f: "わすれる", r: "wasureru", m: "to forget", ej: "傘を忘れた。", ee: "Forgot my umbrella.", i: "forgot"},
+    {k: "渡す", f: "わたす", r: "watasu", m: "to hand over", ej: "手紙を渡す。", ee: "Hand over the letter.", i: "hand-over"},
+    {k: "渡る", f: "わたる", r: "wataru", m: "to cross", ej: "橋を渡る。", ee: "Cross the bridge.", i: "bridge"}
+];
+
+let curIdx = 0;
+
+function update() {
+    const v = verbs[curIdx];
+    document.getElementById('kanji').innerText = v.k;
+    document.getElementById('furi').innerText = v.f;
+    document.getElementById('romaji').innerText = v.r;
+    document.getElementById('mean').innerText = v.m;
+    document.getElementById('exJp').innerText = v.ej;
+    document.getElementById('exEn').innerText = v.ee;
+    document.getElementById('cur').innerText = curIdx + 1;
+    document.getElementById('imgDisplay').src = `https://loremflickr.com/400/300/${encodeURIComponent(v.i)}`;
+    document.getElementById('card').classList.remove('flipped');
+}
+
+function changeCard(dir) {
+    curIdx = (curIdx + dir + verbs.length) % verbs.length;
+    update();
+}
+
+function shuffle() {
+    verbs.sort(() => Math.random() - 0.5);
+    curIdx = 0;
+    update();
+}
+
+// Start
+update();
+</script>
+
+</body>
+</html>
