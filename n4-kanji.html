@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JLPT N4 Kanji Quizzer</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --primary: #4a90e2;
+            --text: #333333;
+            --correct: #2ecc71;
+            --incorrect: #e74c3c;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #eef2f5;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .question-meta {
+            font-size: 0.9rem;
+            color: #888888;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kanji-display {
+            font-size: 4rem;
+            text-align: center;
+            margin: 10px 0 20px 0;
+            color: #111;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-size: 1rem;
+            color: var(--text);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: var(--primary);
+            background-color: #f8faff;
+        }
+
+        .option-btn.correct {
+            background-color: #e8f8f0;
+            border-color: var(--correct);
+            color: #1e7e44;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            background-color: #fdeaea;
+            border-color: var(--incorrect);
+            color: #a93226;
+        }
+
+        .footer {
+            margin-top: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .action-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background-color: #357abd;
+        }
+
+        .action-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .results-container {
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 16px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quizContainer">
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <div id="quizContent">
+        <div class="question-meta" id="questionMeta">Question 1</div>
+        <div class="kanji-display" id="kanjiText">会</div>
+        <div class="options-group" id="optionsGroup"></div>
+
+        <div class="footer">
+            <span id="scoreTracker" style="font-size: 0.9rem; color: #666;">Score: 0</span>
+            <button class="action-btn" id="nextBtn" disabled onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+
+    <div id="resultsContent" class="results-container" style="display: none;">
+        <h2>Quiz Completed!</h2>
+        <div class="score-display" id="finalScore">0%</div>
+        <p id="scoreSummary">You scored 0 out of 0</p>
+        <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+</div>
+
+<script>
+    // Scraped JLPT N4 Kanji Data
+    const rawKanjiData = [
+        { kanji: "会", onyomi: "kai", kunyomi: "a(u)", meaning: "meeting; meet" },
+        { kanji: "同", onyomi: "dou", kunyomi: "onaji", meaning: "same, agree, equal" },
+        { kanji: "事", onyomi: "ji", kunyomi: "koto", meaning: "matter, thing, fact, business, reason, possibly" },
+        { kanji: "自", onyomi: "ji, shi", kunyomi: "mizuka(ra)", meaning: "oneself" },
+        { kanji: "社", onyomi: "sha", kunyomi: "yashiro", meaning: "company, firm, office, association, shrine" },
+        { kanji: "発", onyomi: "hatsu, hotsu", kunyomi: "—", meaning: "departure, discharge, emit, start from" },
+        { kanji: "者", onyomi: "sha", kunyomi: "mono", meaning: "someone, person" },
+        { kanji: "地", onyomi: "chi, ji", kunyomi: "—", meaning: "ground, earth" },
+        { kanji: "業", onyomi: "gyou", kunyomi: "waza", meaning: "business, vocation, arts, performance" },
+        { kanji: "方", onyomi: "hou", kunyomi: "kata", meaning: "direction, person, alternative" },
+        { kanji: "新", onyomi: "shin", kunyomi: "atara(shii), ara(ta)", meaning: "new" },
+        { kanji: "場", onyomi: "jou", kunyomi: "ba", meaning: "location, place" },
+        { kanji: "員", onyomi: "in", kunyomi: "—", meaning: "employee, member, number, the one in charge" },
+        { kanji: "立", onyomi: "ritsu", kunyomi: "ta(tsu)", meaning: "stand up, rise" },
+        { kanji: "開", onyomi: "kai", kunyomi: "hira(ku), a(keru)", meaning: "open, unfold, unseal" },
+        { kanji: "手", onyomi: "shu", kunyomi: "te", meaning: "hand" },
+        { kanji: "力", onyomi: "ryoku, riki", kunyomi: "chikara", meaning: "power, strength, strong, strain, bear up, exert" },
+        { kanji: "問", onyomi: "mon", kunyomi: "to(u)", meaning: "question, ask, problem" },
+        { kanji: "代", onyomi: "dai", kunyomi: "ka(wari)", meaning: "substitute, change, convert, replace, period" },
+        { kanji: "明", onyomi: "mei, myou", kunyomi: "aka(rui)", meaning: "bright, light" },
+        { kanji: "動", onyomi: "dou", kunyomi: "ugo(ku)", meaning: "move, motion, change" },
+        { kanji: "京", onyomi: "kyou, kei, kin", kunyomi: "miyako", meaning: "capital" },
+        { kanji: "目", onyomi: "moku, boku", kunyomi: "me", meaning: "eye, class, look, insight, experience" },
+        { kanji: "通", onyomi: "tsuu", kunyomi: "too(ru), kayo(u)", meaning: "traffic, pass through, avenue, commute" },
+        { kanji: "言", onyomi: "gen, gon", kunyomi: "i(u), koto", meaning: "say, word" },
+        { kanji: "理", onyomi: "ri", kunyomi: "—", meaning: "logic, arrangement, reason, justice, truth" },
+        { kanji: "体", onyomi: "tai", kunyomi: "karada", meaning: "body, substance, object, reality" },
+        { kanji: "田", onyomi: "den", kunyomi: "ta", meaning: "rice field, rice paddy" },
+        { kanji: "主", onyomi: "shu", kunyomi: "nushi, omo", meaning: "lord, chief, master, main thing, principal" },
+        { kanji: "題", onyomi: "dai", kunyomi: "—", meaning: "topic, subject" },
+        { kanji: "意", onyomi: "i", kunyomi: "—", meaning: "idea, mind, heart, taste, thought" },
+        { kanji: "不", onyomi: "fu, bu", kunyomi: "—", meaning: "negative, non-, bad" },
+        { kanji: "作", onyomi: "saku, sa", kunyomi: "tsuku(ru)", meaning: "make, production, prepare, build" },
+        { kanji: "用", onyomi: "you", kunyomi: "mochi(iru)", meaning: "utilize, business, service, use, employ" },
+        { kanji: "度", onyomi: "do, taku", kunyomi: "tabi, ta(i)", meaning: "degrees, occurrence, time, counter for occurrences" },
+        { kanji: "強", onyomi: "kyou, gou", kunyomi: "tsuyo(i)", meaning: "strong" },
+        { kanji: "公", onyomi: "kou", kunyomi: "—", meaning: "public, prince, official, governmental" },
+        { kanji: "持", onyomi: "ji", kunyomi: "mo(tsu)", meaning: "hold, have" },
+        { kanji: "野", onyomi: "ya", kunyomi: "no", meaning: "plains, field, rustic, civilian life" },
+        { kanji: "以", onyomi: "i", kunyomi: "mo(tte)", meaning: "by means of, because, in view of, compared with" },
+        { kanji: "思", onyomi: "shi", kunyomi: "omo(u)", meaning: "think" },
+        { kanji: "家", onyomi: "ka", kunyomi: "ie, ya, uchi", meaning: "house, home, family, professional, expert" },
+        { kanji: "世", onyomi: "sei, se", kunyomi: "yo", meaning: "generation, world, society, public" },
+        { kanji: "多", onyomi: "ta", kunyomi: "oo(i)", meaning: "many, frequent, much" },
+        { kanji: "正", onyomi: "sei, shou", kunyomi: "tada(shii), masa(ni)", meaning: "correct, justice, righteous" },
+        { kanji: "安", onyomi: "an", kunyomi: "yasu(i)", meaning: "safe, peaceful, cheap" },
+        { kanji: "院", onyomi: "in", kunyomi: "—", meaning: "institution, temple, mansion, school" },
+        { kanji: "心", onyomi: "shin", kunyomi: "kokoro", meaning: "heart, mind, spirit" },
+        { kanji: "界", onyomi: "kai", kunyomi: "—", meaning: "world, boundary" },
+        { kanji: "教", onyomi: "kyou", kunyomi: "oshi(eru), oso(waru)", meaning: "teach, faith, doctrine" },
+        { kanji: "文", onyomi: "bun, mon", kunyomi: "fumi", meaning: "sentence, literature, style, art" },
+        { kanji: "元", onyomi: "gen, gan", kunyomi: "moto", meaning: "beginning, former time, origin" },
+        { kanji: "重", onyomi: "juu, chou", kunyomi: "omo(i), kasa(neru)", meaning: "heavy, important, esteem, respect" },
+        { kanji: "近", onyomi: "kin", kunyomi: "chika(i)", meaning: "near, early, akin, tantamount" },
+        { kanji: "考", onyomi: "kou", kunyomi: "kanga(eru)", meaning: "consider, think over" },
+        { kanji: "画", onyomi: "ga, kaku", kunyomi: "kaku(suru)", meaning: "brush-stroke, picture" },
+        { kanji: "海", onyomi: "kai", kunyomi: "umi", meaning: "sea, ocean" },
+        { kanji: "売", onyomi: "bai", kunyomi: "u(ru)", meaning: "sell" },
+        { kanji: "知", onyomi: "chi", kunyomi: "shi(ru)", meaning: "know, wisdom" },
+        { kanji: "道", onyomi: "dou", kunyomi: "michi", meaning: "road-way, street, district, journey, course" },
+        { kanji: "集", onyomi: "shuu", kunyomi: "atsu(meru)", meaning: "gather, meet" },
+        { kanji: "別", onyomi: "betsu", kunyomi: "waka(reru), wa(keru)", meaning: "separate, branch off, diverge" },
+        { kanji: "物", onyomi: "butsu, motsu", kunyomi: "mono", meaning: "thing, object, matter" },
+        { kanji: "使", onyomi: "shi", kunyomi: "tsuka(u)", meaning: "use, order, messenger, ambassador" },
+        { kanji: "品", onyomi: "hin", kunyomi: "shina", meaning: "goods, refinement, dignity, article" },
+        { kanji: "計", onyomi: "kei", kunyomi: "haka(ru)", meaning: "plot, plan, scheme, measure" },
+        { kanji: "死", onyomi: "shi", kunyomi: "shi(nu)", meaning: "death, die" },
+        { kanji: "特", onyomi: "toku", kunyomi: "—", meaning: "special" },
+        { kanji: "私", onyomi: "shi", kunyomi: "watakushi, watashi", meaning: "private, I, me" },
+        { kanji: "始", onyomi: "shi", kunyomi: "haji(meru)", meaning: "commence, begin" },
+        { kanji: "朝", onyomi: "chou", kunyomi: "asa", meaning: "morning" },
+        { kanji: "運", onyomi: "un", kunyomi: "hako(bu)", meaning: "carry, luck, destiny, fate, transport" },
+        { kanji: "終", onyomi: "shuu", kunyomi: "o(waru)", meaning: "end, finish" },
+        { kanji: "台", onyomi: "dai, tai", kunyomi: "utena", meaning: "pedestal, a stand, counter for machines and vehicles" },
+        { kanji: "広", onyomi: "kou", kunyomi: "hiro(i)", meaning: "wide, broad, spacious" },
+        { kanji: "住", onyomi: "juu, chuu", kunyomi: "su(mu)", meaning: "dwell, reside, live, inhabit" },
+        { kanji: "無", onyomi: "mu, bu", kunyomi: "na(i)", meaning: "nothingness, none, ain't, nothing, nil, not" },
+        { kanji: "真", onyomi: "shin", kunyomi: "ma, makoto", meaning: "true, reality, Buddhist sect" },
+        { kanji: "有", onyomi: "yuu, u", kunyomi: "a(ru)", meaning: "possess, have, exist, happen" },
+        { kanji: "口", onyomi: "kou", kunyomi: "kuchi", meaning: "mouth" },
+        { kanji: "少", onyomi: "shou", kunyomi: "suku(nai), suko(shi)", meaning: "few, little" },
+        { kanji: "町", onyomi: "chou", kunyomi: "machi", meaning: "town, village, block, street" },
+        { kanji: "料", onyomi: "ryou", kunyomi: "—", meaning: "fee, materials" },
+        { kanji: "工", onyomi: "kou, ku, gu", kunyomi: "—", meaning: "craft, construction" },
+        { kanji: "建", onyomi: "ken, kon", kunyomi: "ta(teru)", meaning: "build" },
+        { kanji: "空", onyomi: "kuu", kunyomi: "sora, kara, a(ku), su(ku), muna(shii)", meaning: "empty, sky, void, vacant, vacuum" },
+        { kanji: "急", onyomi: "kyuu", kunyomi: "iso(gu)", meaning: "hurry, emergency, sudden, steep" },
+        { kanji: "止", onyomi: "shi", kunyomi: "to(maru), todo(maru), ya(meru), yo(su)", meaning: "stop, halt" },
+        { kanji: "送", onyomi: "sou", kunyomi: "oku(ru)", meaning: "escort, send" },
+        { kanji: "切", onyomi: "setsu, sai", kunyomi: "ki(ru)", meaning: "cut, cutoff, be sharp" },
+        { kanji: "転", onyomi: "ten", kunyomi: "koro(garu)", meaning: "revolve, turn around, change" },
+        { kanji: "研", onyomi: "ken", kunyomi: "to(gu)", meaning: "polish, study of, sharpen" },
+        { kanji: "足", onyomi: "soku", kunyomi: "ashi, ta(riru)", meaning: "leg, foot, be sufficient" },
+        { kanji: "究", onyomi: "kyuu", kunyomi: "—", meaning: "research, study" },
+        { kanji: "楽", onyomi: "gaku, raku", kunyomi: "tano(shii)", meaning: "music, comfort, ease" },
+        { kanji: "起", onyomi: "ki", kunyomi: "o(kiru), oko(su)", meaning: "wake up, get up; rouse" },
+        { kanji: "着", onyomi: "chaku", kunyomi: "ki(ru), tsu(ku)", meaning: "arrive, wear, counter for suits of clothing" },
+        { kanji: "店", onyomi: "ten", kunyomi: "mise", meaning: "store, shop" },
+        { kanji: "病", onyomi: "byou", kunyomi: "ya(mu)", meaning: "ill, sick" },
+        { kanji: "質", onyomi: "shitsu, shichi", kunyomi: "tachi, tada(su)", meaning: "substance, quality, matter, temperament" }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let selectedOptionIndex = null;
+    let currentOptions = [];
+    let correctOptionIndex = 0;
+
+    function initQuiz() {
+        const savedState = localStorage.getItem('n4KanjiQuizState');
+        if (savedState) {
+            const parsed = JSON.parse(savedState);
+            currentQuestionIndex = parsed.currentQuestionIndex || 0;
+            score = parsed.score || 0;
+        }
+        renderQuestion();
+    }
+
+    function saveState() {
+        localStorage.setItem('n4KanjiQuizState', JSON.stringify({
+            currentQuestionIndex,
+            score
+        }));
+    }
+
+    function generateOptions(targetItem) {
+        const correctLabel = formatOption(targetItem);
+        let distractors = [];
+        
+        // Pick 3 random distinct distractors from dataset
+        while (distractors.length < 3) {
+            const randItem = rawKanjiData[Math.floor(Math.random() * rawKanjiData.length)];
+            const distractorLabel = formatOption(randItem);
+            if (distractorLabel !== correctLabel && !distractors.includes(distractorLabel)) {
+                distractors.push(distractorLabel);
+            }
+        }
+
+        const options = [correctLabel, ...distractors];
+        // Shuffle options array
+        for (let i = options.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [options[i], options[j]] = [options[j], options[i]];
+        }
+
+        correctOptionIndex = options.indexOf(correctLabel);
+        return options;
+    }
+
+    function formatOption(item) {
+        const readings = [item.onyomi, item.kunyomi !== "—" ? item.kunyomi : null].filter(Boolean).join(" / ");
+        return `${item.meaning} [${readings}]`;
+    }
+
+    function renderQuestion() {
+        if (currentQuestionIndex >= rawKanjiData.length) {
+            showResults();
+            return;
+        }
+
+        const item = rawKanjiData[currentQuestionIndex];
+        selectedOptionIndex = null;
+        currentOptions = generateOptions(item);
+
+        document.getElementById('questionMeta').innerText = `Kanji ${currentQuestionIndex + 1} of ${rawKanjiData.length}`;
+        document.getElementById('kanjiText').innerText = item.kanji;
+        document.getElementById('scoreTracker').innerText = `Score: ${score}`;
+        
+        const progressPercent = ((currentQuestionIndex) / rawKanjiData.length) * 100;
+        document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+        const optionsGroup = document.getElementById('optionsGroup');
+        optionsGroup.innerHTML = '';
+
+        currentOptions.forEach((optText, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = optText;
+            btn.onclick = () => selectOption(idx);
+            optionsGroup.appendChild(btn);
+        });
+
+        document.getElementById('nextBtn').disabled = true;
+    }
+
+    function selectOption(index) {
+        if (selectedOptionIndex !== null) return;
+
+        selectedOptionIndex = index;
+        const buttons = document.querySelectorAll('.option-btn');
+
+        buttons.forEach((btn, idx) => {
+            btn.disabled = true;
+            if (idx === correctOptionIndex) {
+                btn.classList.add('correct');
+            }
+            if (idx === selectedOptionIndex && idx !== correctOptionIndex) {
+                btn.classList.add('incorrect');
+            }
+        });
+
+        if (selectedOptionIndex === correctOptionIndex) {
+            score++;
+        }
+
+        document.getElementById('scoreTracker').innerText = `Score: ${score}`;
+        document.getElementById('nextBtn').disabled = false;
+        saveState();
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        saveState();
+        renderQuestion();
+    }
+
+    function showResults() {
+        document.getElementById('quizContent').style.display = 'none';
+        document.getElementById('resultsContent').style.display = 'block';
+        document.getElementById('progressBar').style.width = '100%';
+
+        const percentage = Math.round((score / rawKanjiData.length) * 100);
+        document.getElementById('finalScore').innerText = `${percentage}%`;
+        document.getElementById('scoreSummary').innerText = `You scored ${score} out of ${rawKanjiData.length}`;
+        
+        localStorage.removeItem('n4KanjiQuizState');
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        localStorage.removeItem('n4KanjiQuizState');
+        document.getElementById('resultsContent').style.display = 'none';
+        document.getElementById('quizContent').style.display = 'block';
+        renderQuestion();
+    }
+
+    window.onload = initQuiz;
+</script>
+</body>
+</html>
