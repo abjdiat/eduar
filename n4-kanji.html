@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>JLPT N4 Kanji Quizzer</title>
     <style>
         :root {
@@ -15,6 +15,11 @@
             --border: #e0e0e0;
         }
 
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
@@ -24,8 +29,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            padding: 12px;
         }
 
         .quiz-container {
@@ -34,16 +38,49 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             width: 100%;
             max-width: 600px;
-            padding: 30px;
-            box-sizing: border-box;
+            padding: 16px;
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+
+        .mode-select {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: #fff;
+            font-size: 0.85rem;
+            color: var(--text);
+            outline: none;
+        }
+
+        .btn-reset {
+            background-color: transparent;
+            color: var(--incorrect);
+            border: 1px solid var(--incorrect);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-reset:hover {
+            background-color: #fdeaea;
         }
 
         .progress-bar-container {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background-color: #eef2f5;
             border-radius: 4px;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             overflow: hidden;
         }
 
@@ -55,38 +92,71 @@
         }
 
         .question-meta {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #888888;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .kanji-display {
-            font-size: 4rem;
+        .prompt-display {
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            margin: 10px 0 20px 0;
+            margin: 8px 0 16px 0;
             color: #111;
+            word-break: break-word;
+        }
+
+        .prompt-display.kanji-mode {
+            font-size: 3.5rem;
+            font-weight: bold;
+        }
+
+        .prompt-display.meaning-mode {
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.4;
         }
 
         .options-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
         .option-btn {
             background-color: var(--card-bg);
             border: 2px solid var(--border);
             border-radius: 8px;
-            padding: 14px 18px;
-            font-size: 1rem;
+            padding: 12px 14px;
+            font-size: 0.95rem;
             color: var(--text);
             text-align: left;
             cursor: pointer;
             transition: all 0.2s ease;
             outline: none;
+            display: flex;
+            align-items: center;
+            min-height: 48px;
+        }
+
+        .option-key {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            line-height: 22px;
+            text-align: center;
+            background-color: #eef2f5;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 10px;
+            color: #666;
+            flex-shrink: 0;
         }
 
         .option-btn:hover:not([disabled]) {
@@ -108,7 +178,7 @@
         }
 
         .footer {
-            margin-top: 28px;
+            margin-top: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -119,11 +189,12 @@
             color: white;
             border: none;
             border-radius: 8px;
-            padding: 12px 24px;
-            font-size: 1rem;
+            padding: 10px 20px;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s ease;
+            min-height: 44px;
         }
 
         .action-btn:hover {
@@ -140,41 +211,75 @@
         }
 
         .score-display {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
             color: var(--primary);
-            margin: 16px 0;
+            margin: 12px 0;
+        }
+
+        .kbd-hint {
+            font-size: 0.75rem;
+            color: #999;
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .quiz-container {
+                padding: 12px;
+            }
+            .prompt-display.kanji-mode {
+                font-size: 2.8rem;
+            }
+            .prompt-display.meaning-mode {
+                font-size: 1.1rem;
+            }
+            .option-btn {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+            .kbd-hint {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="quiz-container" id="quizContainer">
+    <div class="header-controls">
+        <select id="modeSelect" class="mode-select" onchange="changeMode(this.value)">
+            <option value="kanjiToMeaning">Kanji → Meaning</option>
+            <option value="meaningToKanji">Meaning → Kanji</option>
+        </select>
+        <button class="btn-reset" onclick="resetQuiz()">Reset Progress</button>
+    </div>
+
     <div class="progress-bar-container">
         <div class="progress-bar" id="progressBar"></div>
     </div>
     
     <div id="quizContent">
         <div class="question-meta" id="questionMeta">Question 1</div>
-        <div class="kanji-display" id="kanjiText">会</div>
+        <div class="prompt-display kanji-mode" id="promptText">会</div>
         <div class="options-group" id="optionsGroup"></div>
 
         <div class="footer">
-            <span id="scoreTracker" style="font-size: 0.9rem; color: #666;">Score: 0</span>
-            <button class="action-btn" id="nextBtn" disabled onclick="nextQuestion()">Next</button>
+            <span id="scoreTracker" style="font-size: 0.85rem; color: #666;">Score: 0</span>
+            <button class="action-btn" id="nextBtn" disabled onclick="nextQuestion()">Next (→</button>
         </div>
+        <div class="kbd-hint">Use ↑ ↓ ← → arrows to select & navigate</div>
     </div>
 
     <div id="resultsContent" class="results-container" style="display: none;">
         <h2>Quiz Completed!</h2>
         <div class="score-display" id="finalScore">0%</div>
         <p id="scoreSummary">You scored 0 out of 0</p>
-        <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+        <button class="action-btn" onclick="resetQuiz()">Restart Quiz</button>
     </div>
 </div>
 
 <script>
-    // Scraped JLPT N4 Kanji Data
     const rawKanjiData = [
         { kanji: "会", onyomi: "kai", kunyomi: "a(u)", meaning: "meeting; meet" },
         { kanji: "同", onyomi: "dou", kunyomi: "onaji", meaning: "same, agree, equal" },
@@ -283,6 +388,7 @@
     let selectedOptionIndex = null;
     let currentOptions = [];
     let correctOptionIndex = 0;
+    let quizMode = 'kanjiToMeaning';
 
     function initQuiz() {
         const savedState = localStorage.getItem('n4KanjiQuizState');
@@ -290,32 +396,58 @@
             const parsed = JSON.parse(savedState);
             currentQuestionIndex = parsed.currentQuestionIndex || 0;
             score = parsed.score || 0;
+            quizMode = parsed.quizMode || 'kanjiToMeaning';
+            document.getElementById('modeSelect').value = quizMode;
         }
         renderQuestion();
+        setupKeyboardListener();
     }
 
     function saveState() {
         localStorage.setItem('n4KanjiQuizState', JSON.stringify({
             currentQuestionIndex,
-            score
+            score,
+            quizMode
         }));
     }
 
+    function changeMode(newMode) {
+        quizMode = newMode;
+        saveState();
+        renderQuestion();
+    }
+
+    function resetQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        localStorage.removeItem('n4KanjiQuizState');
+        document.getElementById('resultsContent').style.display = 'none';
+        document.getElementById('quizContent').style.display = 'block';
+        renderQuestion();
+    }
+
+    function getOptionLabel(item, mode) {
+        if (mode === 'kanjiToMeaning') {
+            const readings = [item.onyomi, item.kunyomi !== "—" ? item.kunyomi : null].filter(Boolean).join(" / ");
+            return `${item.meaning} [${readings}]`;
+        } else {
+            return `${item.kanji} (${item.onyomi} / ${item.kunyomi !== "—" ? item.kunyomi : ""})`;
+        }
+    }
+
     function generateOptions(targetItem) {
-        const correctLabel = formatOption(targetItem);
+        const correctLabel = getOptionLabel(targetItem, quizMode);
         let distractors = [];
         
-        // Pick 3 random distinct distractors from dataset
         while (distractors.length < 3) {
             const randItem = rawKanjiData[Math.floor(Math.random() * rawKanjiData.length)];
-            const distractorLabel = formatOption(randItem);
+            const distractorLabel = getOptionLabel(randItem, quizMode);
             if (distractorLabel !== correctLabel && !distractors.includes(distractorLabel)) {
                 distractors.push(distractorLabel);
             }
         }
 
         const options = [correctLabel, ...distractors];
-        // Shuffle options array
         for (let i = options.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [options[i], options[j]] = [options[j], options[i]];
@@ -323,11 +455,6 @@
 
         correctOptionIndex = options.indexOf(correctLabel);
         return options;
-    }
-
-    function formatOption(item) {
-        const readings = [item.onyomi, item.kunyomi !== "—" ? item.kunyomi : null].filter(Boolean).join(" / ");
-        return `${item.meaning} [${readings}]`;
     }
 
     function renderQuestion() {
@@ -340,8 +467,16 @@
         selectedOptionIndex = null;
         currentOptions = generateOptions(item);
 
-        document.getElementById('questionMeta').innerText = `Kanji ${currentQuestionIndex + 1} of ${rawKanjiData.length}`;
-        document.getElementById('kanjiText').innerText = item.kanji;
+        const promptEl = document.getElementById('promptText');
+        if (quizMode === 'kanjiToMeaning') {
+            promptEl.innerText = item.kanji;
+            promptEl.className = 'prompt-display kanji-mode';
+        } else {
+            promptEl.innerText = item.meaning;
+            promptEl.className = 'prompt-display meaning-mode';
+        }
+
+        document.getElementById('questionMeta').innerText = `Question ${currentQuestionIndex + 1} of ${rawKanjiData.length}`;
         document.getElementById('scoreTracker').innerText = `Score: ${score}`;
         
         const progressPercent = ((currentQuestionIndex) / rawKanjiData.length) * 100;
@@ -350,10 +485,11 @@
         const optionsGroup = document.getElementById('optionsGroup');
         optionsGroup.innerHTML = '';
 
+        const arrowKeys = ['↑', '←', '↓', '→'];
         currentOptions.forEach((optText, idx) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
-            btn.innerText = optText;
+            btn.innerHTML = `<span class="option-key">${arrowKeys[idx]}</span> <span>${optText}</span>`;
             btn.onclick = () => selectOption(idx);
             optionsGroup.appendChild(btn);
         });
@@ -404,13 +540,23 @@
         localStorage.removeItem('n4KanjiQuizState');
     }
 
-    function restartQuiz() {
-        currentQuestionIndex = 0;
-        score = 0;
-        localStorage.removeItem('n4KanjiQuizState');
-        document.getElementById('resultsContent').style.display = 'none';
-        document.getElementById('quizContent').style.display = 'block';
-        renderQuestion();
+    function setupKeyboardListener() {
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement && document.activeElement.tagName === 'SELECT') return;
+
+            if (selectedOptionIndex === null) {
+                if (e.key === 'ArrowUp') selectOption(0);
+                else if (e.key === 'ArrowLeft') selectOption(1);
+                else if (e.key === 'ArrowDown') selectOption(2);
+                else if (e.key === 'ArrowRight') selectOption(3);
+            } else {
+                if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') {
+                    if (currentQuestionIndex < rawKanjiData.length) {
+                        nextQuestion();
+                    }
+                }
+            }
+        });
     }
 
     window.onload = initQuiz;
