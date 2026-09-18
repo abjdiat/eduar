@@ -281,106 +281,792 @@
 
 <script>
     const rawKanjiData = [
-        { kanji: "会", onyomi: "kai", kunyomi: "a(u)", meaning: "meeting; meet" },
-        { kanji: "同", onyomi: "dou", kunyomi: "onaji", meaning: "same, agree, equal" },
-        { kanji: "事", onyomi: "ji", kunyomi: "koto", meaning: "matter, thing, fact, business, reason, possibly" },
-        { kanji: "自", onyomi: "ji, shi", kunyomi: "mizuka(ra)", meaning: "oneself" },
-        { kanji: "社", onyomi: "sha", kunyomi: "yashiro", meaning: "company, firm, office, association, shrine" },
-        { kanji: "発", onyomi: "hatsu, hotsu", kunyomi: "—", meaning: "departure, discharge, emit, start from" },
-        { kanji: "者", onyomi: "sha", kunyomi: "mono", meaning: "someone, person" },
-        { kanji: "地", onyomi: "chi, ji", kunyomi: "—", meaning: "ground, earth" },
-        { kanji: "業", onyomi: "gyou", kunyomi: "waza", meaning: "business, vocation, arts, performance" },
-        { kanji: "方", onyomi: "hou", kunyomi: "kata", meaning: "direction, person, alternative" },
-        { kanji: "新", onyomi: "shin", kunyomi: "atara(shii), ara(ta)", meaning: "new" },
-        { kanji: "場", onyomi: "jou", kunyomi: "ba", meaning: "location, place" },
-        { kanji: "員", onyomi: "in", kunyomi: "—", meaning: "employee, member, number, the one in charge" },
-        { kanji: "立", onyomi: "ritsu", kunyomi: "ta(tsu)", meaning: "stand up, rise" },
-        { kanji: "開", onyomi: "kai", kunyomi: "hira(ku), a(keru)", meaning: "open, unfold, unseal" },
-        { kanji: "手", onyomi: "shu", kunyomi: "te", meaning: "hand" },
-        { kanji: "力", onyomi: "ryoku, riki", kunyomi: "chikara", meaning: "power, strength, strong, strain, bear up, exert" },
-        { kanji: "問", onyomi: "mon", kunyomi: "to(u)", meaning: "question, ask, problem" },
-        { kanji: "代", onyomi: "dai", kunyomi: "ka(wari)", meaning: "substitute, change, convert, replace, period" },
-        { kanji: "明", onyomi: "mei, myou", kunyomi: "aka(rui)", meaning: "bright, light" },
-        { kanji: "動", onyomi: "dou", kunyomi: "ugo(ku)", meaning: "move, motion, change" },
-        { kanji: "京", onyomi: "kyou, kei, kin", kunyomi: "miyako", meaning: "capital" },
-        { kanji: "目", onyomi: "moku, boku", kunyomi: "me", meaning: "eye, class, look, insight, experience" },
-        { kanji: "通", onyomi: "tsuu", kunyomi: "too(ru), kayo(u)", meaning: "traffic, pass through, avenue, commute" },
-        { kanji: "言", onyomi: "gen, gon", kunyomi: "i(u), koto", meaning: "say, word" },
-        { kanji: "理", onyomi: "ri", kunyomi: "—", meaning: "logic, arrangement, reason, justice, truth" },
-        { kanji: "体", onyomi: "tai", kunyomi: "karada", meaning: "body, substance, object, reality" },
-        { kanji: "田", onyomi: "den", kunyomi: "ta", meaning: "rice field, rice paddy" },
-        { kanji: "主", onyomi: "shu", kunyomi: "nushi, omo", meaning: "lord, chief, master, main thing, principal" },
-        { kanji: "題", onyomi: "dai", kunyomi: "—", meaning: "topic, subject" },
-        { kanji: "意", onyomi: "i", kunyomi: "—", meaning: "idea, mind, heart, taste, thought" },
-        { kanji: "不", onyomi: "fu, bu", kunyomi: "—", meaning: "negative, non-, bad" },
-        { kanji: "作", onyomi: "saku, sa", kunyomi: "tsuku(ru)", meaning: "make, production, prepare, build" },
-        { kanji: "用", onyomi: "you", kunyomi: "mochi(iru)", meaning: "utilize, business, service, use, employ" },
-        { kanji: "度", onyomi: "do, taku", kunyomi: "tabi, ta(i)", meaning: "degrees, occurrence, time, counter for occurrences" },
-        { kanji: "強", onyomi: "kyou, gou", kunyomi: "tsuyo(i)", meaning: "strong" },
-        { kanji: "公", onyomi: "kou", kunyomi: "—", meaning: "public, prince, official, governmental" },
-        { kanji: "持", onyomi: "ji", kunyomi: "mo(tsu)", meaning: "hold, have" },
-        { kanji: "野", onyomi: "ya", kunyomi: "no", meaning: "plains, field, rustic, civilian life" },
-        { kanji: "以", onyomi: "i", kunyomi: "mo(tte)", meaning: "by means of, because, in view of, compared with" },
-        { kanji: "思", onyomi: "shi", kunyomi: "omo(u)", meaning: "think" },
-        { kanji: "家", onyomi: "ka", kunyomi: "ie, ya, uchi", meaning: "house, home, family, professional, expert" },
-        { kanji: "世", onyomi: "sei, se", kunyomi: "yo", meaning: "generation, world, society, public" },
-        { kanji: "多", onyomi: "ta", kunyomi: "oo(i)", meaning: "many, frequent, much" },
-        { kanji: "正", onyomi: "sei, shou", kunyomi: "tada(shii), masa(ni)", meaning: "correct, justice, righteous" },
-        { kanji: "安", onyomi: "an", kunyomi: "yasu(i)", meaning: "safe, peaceful, cheap" },
-        { kanji: "院", onyomi: "in", kunyomi: "—", meaning: "institution, temple, mansion, school" },
-        { kanji: "心", onyomi: "shin", kunyomi: "kokoro", meaning: "heart, mind, spirit" },
-        { kanji: "界", onyomi: "kai", kunyomi: "—", meaning: "world, boundary" },
-        { kanji: "教", onyomi: "kyou", kunyomi: "oshi(eru), oso(waru)", meaning: "teach, faith, doctrine" },
-        { kanji: "文", onyomi: "bun, mon", kunyomi: "fumi", meaning: "sentence, literature, style, art" },
-        { kanji: "元", onyomi: "gen, gan", kunyomi: "moto", meaning: "beginning, former time, origin" },
-        { kanji: "重", onyomi: "juu, chou", kunyomi: "omo(i), kasa(neru)", meaning: "heavy, important, esteem, respect" },
-        { kanji: "近", onyomi: "kin", kunyomi: "chika(i)", meaning: "near, early, akin, tantamount" },
-        { kanji: "考", onyomi: "kou", kunyomi: "kanga(eru)", meaning: "consider, think over" },
-        { kanji: "画", onyomi: "ga, kaku", kunyomi: "kaku(suru)", meaning: "brush-stroke, picture" },
-        { kanji: "海", onyomi: "kai", kunyomi: "umi", meaning: "sea, ocean" },
-        { kanji: "売", onyomi: "bai", kunyomi: "u(ru)", meaning: "sell" },
-        { kanji: "知", onyomi: "chi", kunyomi: "shi(ru)", meaning: "know, wisdom" },
-        { kanji: "道", onyomi: "dou", kunyomi: "michi", meaning: "road-way, street, district, journey, course" },
-        { kanji: "集", onyomi: "shuu", kunyomi: "atsu(meru)", meaning: "gather, meet" },
-        { kanji: "別", onyomi: "betsu", kunyomi: "waka(reru), wa(keru)", meaning: "separate, branch off, diverge" },
-        { kanji: "物", onyomi: "butsu, motsu", kunyomi: "mono", meaning: "thing, object, matter" },
-        { kanji: "使", onyomi: "shi", kunyomi: "tsuka(u)", meaning: "use, order, messenger, ambassador" },
-        { kanji: "品", onyomi: "hin", kunyomi: "shina", meaning: "goods, refinement, dignity, article" },
-        { kanji: "計", onyomi: "kei", kunyomi: "haka(ru)", meaning: "plot, plan, scheme, measure" },
-        { kanji: "死", onyomi: "shi", kunyomi: "shi(nu)", meaning: "death, die" },
-        { kanji: "特", onyomi: "toku", kunyomi: "—", meaning: "special" },
-        { kanji: "私", onyomi: "shi", kunyomi: "watakushi, watashi", meaning: "private, I, me" },
-        { kanji: "始", onyomi: "shi", kunyomi: "haji(meru)", meaning: "commence, begin" },
-        { kanji: "朝", onyomi: "chou", kunyomi: "asa", meaning: "morning" },
-        { kanji: "運", onyomi: "un", kunyomi: "hako(bu)", meaning: "carry, luck, destiny, fate, transport" },
-        { kanji: "終", onyomi: "shuu", kunyomi: "o(waru)", meaning: "end, finish" },
-        { kanji: "台", onyomi: "dai, tai", kunyomi: "utena", meaning: "pedestal, a stand, counter for machines and vehicles" },
-        { kanji: "広", onyomi: "kou", kunyomi: "hiro(i)", meaning: "wide, broad, spacious" },
-        { kanji: "住", onyomi: "juu, chuu", kunyomi: "su(mu)", meaning: "dwell, reside, live, inhabit" },
-        { kanji: "無", onyomi: "mu, bu", kunyomi: "na(i)", meaning: "nothingness, none, ain't, nothing, nil, not" },
-        { kanji: "真", onyomi: "shin", kunyomi: "ma, makoto", meaning: "true, reality, Buddhist sect" },
-        { kanji: "有", onyomi: "yuu, u", kunyomi: "a(ru)", meaning: "possess, have, exist, happen" },
-        { kanji: "口", onyomi: "kou", kunyomi: "kuchi", meaning: "mouth" },
-        { kanji: "少", onyomi: "shou", kunyomi: "suku(nai), suko(shi)", meaning: "few, little" },
-        { kanji: "町", onyomi: "chou", kunyomi: "machi", meaning: "town, village, block, street" },
-        { kanji: "料", onyomi: "ryou", kunyomi: "—", meaning: "fee, materials" },
-        { kanji: "工", onyomi: "kou, ku, gu", kunyomi: "—", meaning: "craft, construction" },
-        { kanji: "建", onyomi: "ken, kon", kunyomi: "ta(teru)", meaning: "build" },
-        { kanji: "空", onyomi: "kuu", kunyomi: "sora, kara, a(ku), su(ku), muna(shii)", meaning: "empty, sky, void, vacant, vacuum" },
-        { kanji: "急", onyomi: "kyuu", kunyomi: "iso(gu)", meaning: "hurry, emergency, sudden, steep" },
-        { kanji: "止", onyomi: "shi", kunyomi: "to(maru), todo(maru), ya(meru), yo(su)", meaning: "stop, halt" },
-        { kanji: "送", onyomi: "sou", kunyomi: "oku(ru)", meaning: "escort, send" },
-        { kanji: "切", onyomi: "setsu, sai", kunyomi: "ki(ru)", meaning: "cut, cutoff, be sharp" },
-        { kanji: "転", onyomi: "ten", kunyomi: "koro(garu)", meaning: "revolve, turn around, change" },
-        { kanji: "研", onyomi: "ken", kunyomi: "to(gu)", meaning: "polish, study of, sharpen" },
-        { kanji: "足", onyomi: "soku", kunyomi: "ashi, ta(riru)", meaning: "leg, foot, be sufficient" },
-        { kanji: "究", onyomi: "kyuu", kunyomi: "—", meaning: "research, study" },
-        { kanji: "楽", onyomi: "gaku, raku", kunyomi: "tano(shii)", meaning: "music, comfort, ease" },
-        { kanji: "起", onyomi: "ki", kunyomi: "o(kiru), oko(su)", meaning: "wake up, get up; rouse" },
-        { kanji: "着", onyomi: "chaku", kunyomi: "ki(ru), tsu(ku)", meaning: "arrive, wear, counter for suits of clothing" },
-        { kanji: "店", onyomi: "ten", kunyomi: "mise", meaning: "store, shop" },
-        { kanji: "病", onyomi: "byou", kunyomi: "ya(mu)", meaning: "ill, sick" },
-        { kanji: "質", onyomi: "shitsu, shichi", kunyomi: "tachi, tada(su)", meaning: "substance, quality, matter, temperament" }
+{
+"kanji": "家",
+"meaning": "house"
+},
+{
+"kanji": "族",
+"meaning": "family/tribe"
+},
+{
+"kanji": "兄",
+"meaning": "elder brother"
+},
+{
+"kanji": "弟",
+"meaning": "younger brother"
+},
+{
+"kanji": "姉",
+"meaning": "elder sister"
+},
+{
+"kanji": "妹",
+"meaning": "younger sister"
+},
+{
+"kanji": "親",
+"meaning": "parent/friendly"
+},
+{
+"kanji": "私",
+"meaning": "I/myself"
+},
+{
+"kanji": "主",
+"meaning": "master"
+},
+{
+"kanji": "朝",
+"meaning": "morning"
+},
+{
+"kanji": "昼",
+"meaning": "daytime"
+},
+{
+"kanji": "夕",
+"meaning": "evening"
+},
+{
+"kanji": "夜",
+"meaning": "night"
+},
+{
+"kanji": "曜",
+"meaning": "day of the week"
+},
+{
+"kanji": "春",
+"meaning": "spring"
+},
+{
+"kanji": "夏",
+"meaning": "summer"
+},
+{
+"kanji": "秋",
+"meaning": "autumn"
+},
+{
+"kanji": "冬",
+"meaning": "winter"
+},
+{
+"kanji": "体",
+"meaning": "body"
+},
+{
+"kanji": "心",
+"meaning": "heart"
+},
+{
+"kanji": "頭",
+"meaning": "head"
+},
+{
+"kanji": "顔",
+"meaning": "face"
+},
+{
+"kanji": "首",
+"meaning": "neck"
+},
+{
+"kanji": "声",
+"meaning": "voice"
+},
+{
+"kanji": "死",
+"meaning": "pass away"
+},
+{
+"kanji": "色",
+"meaning": "color"
+},
+{
+"kanji": "赤",
+"meaning": "red"
+},
+{
+"kanji": "黒",
+"meaning": "black"
+},
+{
+"kanji": "茶",
+"meaning": "brown"
+},
+{
+"kanji": "銀",
+"meaning": "silver"
+},
+{
+"kanji": "森",
+"meaning": "forest"
+},
+{
+"kanji": "林",
+"meaning": "woods"
+},
+{
+"kanji": "海",
+"meaning": "sea"
+},
+{
+"kanji": "池",
+"meaning": "pond"
+},
+{
+"kanji": "風",
+"meaning": "wind"
+},
+{
+"kanji": "地",
+"meaning": "land"
+},
+{
+"kanji": "田",
+"meaning": "rice field"
+},
+{
+"kanji": "野",
+"meaning": "field"
+},
+{
+"kanji": "菜",
+"meaning": "vegetable"
+},
+{
+"kanji": "犬",
+"meaning": "dog"
+},
+{
+"kanji": "鳥",
+"meaning": "bird"
+},
+{
+"kanji": "映",
+"meaning": "reflect"
+},
+{
+"kanji": "画",
+"meaning": "plan/picture"
+},
+{
+"kanji": "館",
+"meaning": "building"
+},
+{
+"kanji": "写",
+"meaning": "copy"
+},
+{
+"kanji": "真",
+"meaning": "true"
+},
+{
+"kanji": "紙",
+"meaning": "paper"
+},
+{
+"kanji": "歌",
+"meaning": "sing"
+},
+{
+"kanji": "音",
+"meaning": "sound"
+},
+{
+"kanji": "好",
+"meaning": "like"
+},
+{
+"kanji": "洋",
+"meaning": "ocean"
+},
+{
+"kanji": "服",
+"meaning": "clothes"
+},
+{
+"kanji": "世",
+"meaning": "generation/society"
+},
+{
+"kanji": "界",
+"meaning": "world"
+},
+{
+"kanji": "旅",
+"meaning": "travel"
+},
+{
+"kanji": "都",
+"meaning": "metropolis"
+},
+{
+"kanji": "区",
+"meaning": "ward"
+},
+{
+"kanji": "県",
+"meaning": "prefecture"
+},
+{
+"kanji": "市",
+"meaning": "city/market"
+},
+{
+"kanji": "町",
+"meaning": "town"
+},
+{
+"kanji": "村",
+"meaning": "village"
+},
+{
+"kanji": "住",
+"meaning": "live"
+},
+{
+"kanji": "民",
+"meaning": "citizen"
+},
+{
+"kanji": "京",
+"meaning": "capital"
+},
+{
+"kanji": "場",
+"meaning": "site"
+},
+{
+"kanji": "所",
+"meaning": "place"
+},
+{
+"kanji": "建",
+"meaning": "build"
+},
+{
+"kanji": "方",
+"meaning": "direction"
+},
+{
+"kanji": "門",
+"meaning": "gate"
+},
+{
+"kanji": "病",
+"meaning": "sick"
+},
+{
+"kanji": "院",
+"meaning": "institution"
+},
+{
+"kanji": "医",
+"meaning": "doctor"
+},
+{
+"kanji": "者",
+"meaning": "someone/person"
+},
+{
+"kanji": "薬",
+"meaning": "medicine"
+},
+{
+"kanji": "肉",
+"meaning": "meat"
+},
+{
+"kanji": "料",
+"meaning": "price/materials"
+},
+{
+"kanji": "理",
+"meaning": "logical"
+},
+{
+"kanji": "味",
+"meaning": "taste"
+},
+{
+"kanji": "飯",
+"meaning": "meal"
+},
+{
+"kanji": "質",
+"meaning": "ask a question quality"
+},
+{
+"kanji": "問",
+"meaning": "inquiry"
+},
+{
+"kanji": "題",
+"meaning": "topic"
+},
+{
+"kanji": "答",
+"meaning": "answer"
+},
+{
+"kanji": "漢",
+"meaning": "kanji"
+},
+{
+"kanji": "字",
+"meaning": "character"
+},
+{
+"kanji": "研",
+"meaning": "study of polish"
+},
+{
+"kanji": "究",
+"meaning": "research"
+},
+{
+"kanji": "自",
+"meaning": "self"
+},
+{
+"kanji": "習",
+"meaning": "learn"
+},
+{
+"kanji": "室",
+"meaning": "room"
+},
+{
+"kanji": "勉",
+"meaning": "endeavour"
+},
+{
+"kanji": "図",
+"meaning": "map"
+},
+{
+"kanji": "工",
+"meaning": "craft"
+},
+{
+"kanji": "文",
+"meaning": "sentence"
+},
+{
+"kanji": "説",
+"meaning": "explain"
+},
+{
+"kanji": "験",
+"meaning": "examine"
+},
+{
+"kanji": "老",
+"meaning": "consider"
+},
+{
+"kanji": "教",
+"meaning": "teach"
+},
+{
+"kanji": "英",
+"meaning": "England"
+},
+{
+"kanji": "屋",
+"meaning": "store"
+},
+{
+"kanji": "員",
+"reading": "いん",
+"meaning": "employee / member"
+},
+{
+"kanji": "品",
+"reading": "しな",
+"meaning": "goods"
+},
+{
+"kanji": "物",
+"reading": "もの",
+"meaning": "thing / object"
+},
+{
+"kanji": "代",
+"reading": "だい",
+"meaning": "substitute"
+},
+{
+"kanji": "合",
+"reading": "ご",
+"meaning": "fit"
+},
+{
+"kanji": "計",
+"reading": "けい",
+"meaning": "count"
+},
+{
+"kanji": "暑",
+"reading": "あつ — い",
+"meaning": "hot"
+},
+{
+"kanji": "寒",
+"reading": "さむ — い",
+"meaning": "cold"
+},
+{
+"kanji": "強",
+"reading": "つよ — い",
+"meaning": "strong"
+},
+{
+"kanji": "弱",
+"reading": "よわ — い",
+"meaning": "weak"
+},
+{
+"kanji": "重",
+"reading": "おも — い",
+"meaning": "heavy"
+},
+{
+"kanji": "軽",
+"reading": "かる — い",
+"meaning": "light"
+},
+{
+"kanji": "明",
+"reading": "あか — るい",
+"meaning": "bright"
+},
+{
+"kanji": "暗",
+"reading": "くら — い",
+"meaning": "dark"
+},
+{
+"kanji": "近",
+"reading": "ちか — い",
+"meaning": "near"
+},
+{
+"kanji": "遠",
+"reading": "おと — い",
+"meaning": "far"
+},
+{
+"kanji": "太",
+"reading": "ふと — い",
+"meaning": "fat"
+},
+{
+"kanji": "短",
+"reading": "みじか — い",
+"meaning": "short"
+},
+{
+"kanji": "広",
+"reading": "ひろ — い",
+"meaning": "spacious"
+},
+{
+"kanji": "低",
+"reading": "ひく — い",
+"meaning": "low"
+},
+{
+"kanji": "悪",
+"reading": "わる — い",
+"meaning": "bad"
+},
+{
+"kanji": "楽",
+"reading": "たの — しい",
+"meaning": "pleasure"
+},
+{
+"kanji": "正",
+"reading": "ただ — しい",
+"meaning": "correct"
+},
+{
+"kanji": "同",
+"reading": "おな — じ",
+"meaning": "same"
+},
+{
+"kanji": "動",
+"reading": "うご — く",
+"meaning": "move"
+},
+{
+"kanji": "止",
+"reading": "と — まる",
+"meaning": "stop"
+},
+{
+"kanji": "始",
+"reading": "はじ — める",
+"meaning": "start"
+},
+{
+"kanji": "終",
+"reading": "お — わる",
+"meaning": "end"
+},
+{
+"kanji": "貸",
+"reading": "か — す",
+"meaning": "lend"
+},
+{
+"kanji": "借",
+"reading": "か — りる",
+"meaning": "borrow"
+},
+{
+"kanji": "走",
+"reading": "はし — る",
+"meaning": "run"
+},
+{
+"kanji": "歩",
+"reading": "ある — く",
+"meaning": "walk"
+},
+{
+"kanji": "発",
+"reading": "はつ",
+"meaning": "discharge"
+},
+{
+"kanji": "着",
+"reading": "ちゃく",
+"meaning": "arrive"
+},
+{
+"kanji": "持",
+"reading": "も — つ",
+"meaning": "hold"
+},
+{
+"kanji": "引",
+"reading": "ひ — く",
+"meaning": "pull"
+},
+{
+"kanji": "開",
+"reading": "あ — ける",
+"meaning": "open"
+},
+{
+"kanji": "作",
+"reading": "つく — る",
+"meaning": "make"
+},
+{
+"kanji": "切",
+"reading": "き — る",
+"meaning": "cut"
+},
+{
+"kanji": "洗",
+"reading": "あら — う",
+"meaning": "wash"
+},
+{
+"kanji": "運",
+"reading": "はこ — ぶ",
+"meaning": "carry"
+},
+{
+"kanji": "転",
+"reading": "ころ — ぶ",
+"meaning": "rotate"
+},
+{
+"kanji": "乗",
+"reading": "の — る",
+"meaning": "ride"
+},
+{
+"kanji": "送",
+"reading": "おく — る",
+"meaning": "send"
+},
+{
+"kanji": "進",
+"reading": "すす — む",
+"meaning": "advance"
+},
+{
+"kanji": "通",
+"reading": "とう — る",
+"meaning": "pass / street"
+},
+{
+"kanji": "起",
+"reading": "お — きる",
+"meaning": "get up"
+},
+{
+"kanji": "働",
+"reading": "はたら — く",
+"meaning": "work"
+},
+{
+"kanji": "急",
+"reading": "いそ — ぐ",
+"meaning": "hurry"
+},
+{
+"kanji": "帰",
+"reading": "かえ — る",
+"meaning": "go home"
+},
+{
+"kanji": "待",
+"reading": "ま — つ",
+"meaning": "wait"
+},
+{
+"kanji": "別",
+"reading": "わか — れる",
+"meaning": "separate"
+},
+{
+"kanji": "去",
+"reading": "さ — る",
+"meaning": "leave"
+},
+{
+"kanji": "思",
+"reading": "おも — う",
+"meaning": "think"
+},
+{
+"kanji": "売",
+"reading": "う — る",
+"meaning": "sell"
+},
+{
+"kanji": "試",
+"reading": "ため — す",
+"meaning": "test"
+},
+{
+"kanji": "使",
+"reading": "つか — う",
+"meaning": "use"
+},
+{
+"kanji": "産",
+"reading": "う — む",
+"meaning": "birth / produce"
+},
+{
+"kanji": "知",
+"reading": "し — る",
+"meaning": "know"
+},
+{
+"kanji": "集",
+"reading": "あつ — まる",
+"meaning": "gather"
+},
+{
+"kanji": "回",
+"reading": "まわ — る",
+"meaning": "turn / number of times"
+},
+{
+"kanji": "仕",
+"reading": "し",
+"meaning": "serve"
+},
+{
+"kanji": "事",
+"reading": "こと",
+"meaning": "matter"
+},
+{
+"kanji": "注",
+"reading": "ちゃう",
+"meaning": "pour"
+},
+{
+"kanji": "意",
+"reading": "い",
+"meaning": "mind / meaning / attention"
+},
+{
+"kanji": "特",
+"reading": "とく",
+"meaning": "special"
+},
+{
+"kanji": "有",
+"reading": "ゆう",
+"meaning": "possess"
+},
+{
+"kanji": "業",
+"reading": "ぎょう",
+"meaning": "industry"
+},
+{
+"kanji": "用",
+"reading": "よう",
+"meaning": "utilize"
+},
+{
+"kanji": "以",
+"reading": "い",
+"meaning": "from"
+},
+{
+"kanji": "不",
+"reading": "ふ",
+"meaning": "not"
+},
+{
+"kanji": "元",
+"reading": "もと",
+"meaning": "origin"
+},
+{
+"kanji": "度",
+"reading": "ど",
+"meaning": "degree / number of times"
+},
+{
+"kanji": "便",
+"reading": "べん",
+"meaning": "convenient"
+},
+{
+"kanji": "光",
+"reading": "ひかり",
+"meaning": "light"
+},
+{
+"kanji": "台",
+"reading": "だい",
+"meaning": "stand"
+},
+{
+"kanji": "堂",
+"reading": "どう",
+"meaning": "hall"
+}
+
     ];
 
     let currentQuestionIndex = 0;
