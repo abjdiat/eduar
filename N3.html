@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JLPT N3 Kanji Master & Quiz</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        vibrant: {
+                            pink: '#FF2E93',
+                            purple: '#8B5CF6',
+                            cyan: '#06B6D4',
+                            yellow: '#F59E0B',
+                            green: '#10B981',
+                            red: '#EF4444',
+                            coral: '#FF6B6B',
+                            lime: '#84CC16',
+                            brightBg: '#F3F0FF'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        jp: ['"Noto Sans JP"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #F9F5FF 0%, #EDF8FF 50%, #FFF5F8 100%);
+            min-height: 100vh;
+        }
+
+        /* Perspective and 3D Flip Card Animation */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* Custom Colorful Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #EC4899, #8B5CF6);
+            border-radius: 9999px;
+        }
+
+        /* Lively Button Animations */
+        .btn-bounce {
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn-bounce:active {
+            transform: scale(0.95);
+        }
+        
+        .bright-shadow-pink {
+            box-shadow: 0 10px 25px -5px rgba(255, 46, 147, 0.4);
+        }
+        .bright-shadow-purple {
+            box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.4);
+        }
+        .bright-shadow-cyan {
+            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.4);
+        }
+        .bright-shadow-green {
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen pb-20 md:pb-6">
+
+    <!-- Top Header -->
+    <header class="bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                <div class="bg-white/20 p-2.5 rounded-2xl backdrop-blur-md border border-white/30">
+                    <i class="fa-solid font-jp text-2xl font-black text-yellow-300">N3</i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-xl sm:text-2xl tracking-tight leading-none drop-shadow-sm">Kanji Spark</h1>
+                    <p class="text-xs text-pink-100 font-medium">JLPT N3 Master & Practice</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="switchTab('study')" class="hidden sm:flex items-center space-x-2 bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-4 py-2 rounded-xl shadow-md transition-all btn-bounce">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Study Cards</span>
+                </button>
+                <button onclick="switchTab('quiz-setup')" class="bg-emerald-400 hover:bg-emerald-300 text-slate-900 font-bold px-4 py-2 rounded-xl shadow-md transition-all btn-bounce flex items-center space-x-2">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Start Quiz</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- VIEW: DASHBOARD -->
+        <section id="view-dashboard" class="space-y-6">
+            <!-- Hero Stats Banner -->
+            <div class="bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl font-black font-jp select-none">漢</div>
+                <div class="relative z-10">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold mb-1">Welcome Back, Learner! ✨</h2>
+                    <p class="text-purple-100 text-sm mb-6 max-w-lg">Master 370 essential JLPT N3 Kanji with colorful flashcards, audio readings, and adaptive quizzes.</p>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-slate-800">
+                        <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-md text-center transform hover:-translate-y-1 transition-all">
+                            <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total N3 Kanji</span>
+                            <span class="text-2xl sm:text-3xl font-black text-indigo-600" id="dash-total-count">370</span>
+                        </div>
+                        <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-md text-center transform hover:-translate-y-1 transition-all">
+                            <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mastered</span>
+                            <span class="text-2xl sm:text-3xl font-black text-emerald-500" id="dash-mastered-count">0</span>
+                        </div>
+                        <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-md text-center transform hover:-translate-y-1 transition-all">
+                            <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Starred</span>
+                            <span class="text-2xl sm:text-3xl font-black text-amber-500" id="dash-starred-count">0</span>
+                        </div>
+                        <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-md text-center transform hover:-translate-y-1 transition-all">
+                            <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Quiz Accuracy</span>
+                            <span class="text-2xl sm:text-3xl font-black text-pink-500" id="dash-accuracy">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mt-6 bg-black/20 rounded-full h-4 p-0.5 backdrop-blur-sm">
+                        <div id="dash-progress-bar" class="bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-300 h-full rounded-full transition-all duration-700 shadow-md" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Hub Grid -->
+            <div class="grid md:grid-cols-2 gap-5">
+                <!-- Card 1: Study & Flashcards -->
+                <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-6 text-slate-900 shadow-lg bright-shadow-pink relative flex flex-col justify-between group cursor-pointer hover:scale-[1.01] transition-all" onclick="switchTab('study')">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-14 h-14 bg-white/30 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl">
+                            📚
+                        </div>
+                        <span class="bg-white/90 text-amber-900 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider">Review Mode</span>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-extrabold mb-1 text-slate-900">Study & Flashcards</h3>
+                        <p class="text-slate-800 text-sm font-medium mb-4">Browse all 370 N3 Kanji, listen to audio, toggle flip cards, and filter starred items before taking quizzes.</p>
+                        <span class="inline-flex items-center font-bold text-slate-900 group-hover:translate-x-2 transition-transform">
+                            Open Study Hub <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Take Quiz -->
+                <div class="bg-gradient-to-br from-pink-500 to-purple-600 rounded-3xl p-6 text-white shadow-lg bright-shadow-purple relative flex flex-col justify-between group cursor-pointer hover:scale-[1.01] transition-all" onclick="switchTab('quiz-setup')">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl">
+                            ⚡
+                        </div>
+                        <span class="bg-yellow-400 text-slate-900 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider">Practice Mode</span>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-extrabold mb-1">Interactive Quiz Engine</h3>
+                        <p class="text-pink-100 text-sm font-medium mb-4">Test yourself with customizable MCQ challenges: Kanji ↔ Meaning, Furigana ↔ Kanji, and targeted lists.</p>
+                        <span class="inline-flex items-center font-bold text-yellow-300 group-hover:translate-x-2 transition-transform">
+                            Configure & Play <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity / Quick Stats -->
+            <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-extrabold text-lg text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-purple-500"></i> Overall Mastery Breakdown
+                    </h3>
+                    <button onclick="resetProgress()" class="text-xs font-bold text-rose-500 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset Data
+                    </button>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                            <span>Learned / Mastered</span>
+                            <span id="stat-mastered-pct">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                            <div id="stat-mastered-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                            <span>Starred / Needs Review</span>
+                            <span id="stat-starred-pct">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                            <div id="stat-starred-bar" class="bg-amber-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                            <span>Unlearned / Fresh</span>
+                            <span id="stat-unlearned-pct">100%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                            <div id="stat-unlearned-bar" class="bg-cyan-400 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: STUDY & REVIEW HUB -->
+        <section id="view-study" class="space-y-6 hidden">
+            <!-- Study Navigation Header -->
+            <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <!-- Search Box -->
+                <div class="relative w-full md:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="study-search" oninput="filterStudyCards()" placeholder="Search Kanji, Reading, or Meaning..." class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-2 border-slate-200 focus:border-purple-500 focus:bg-white rounded-2xl text-sm font-semibold text-slate-800 transition-all outline-none">
+                </div>
+
+                <!-- Status Filter Pills -->
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <button onclick="setStudyFilter('all')" id="filter-btn-all" class="filter-pill active px-4 py-2 rounded-xl text-xs font-extrabold bg-purple-600 text-white shadow-md transition-all">
+                        All (370)
+                    </button>
+                    <button onclick="setStudyFilter('starred')" id="filter-btn-starred" class="filter-pill px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
+                        ⭐ Starred (<span id="filter-starred-count">0</span>)
+                    </button>
+                    <button onclick="setStudyFilter('learned')" id="filter-btn-learned" class="filter-pill px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
+                        ✅ Learned (<span id="filter-learned-count">0</span>)
+                    </button>
+                    <button onclick="setStudyFilter('unlearned')" id="filter-btn-unlearned" class="filter-pill px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
+                        🎯 Unlearned (<span id="filter-unlearned-count">370</span>)
+                    </button>
+                </div>
+
+                <!-- Mode Toggle (Grid vs Single Flashcard View) -->
+                <div class="flex bg-slate-100 p-1 rounded-2xl w-full md:w-auto justify-center">
+                    <button onclick="setStudyViewMode('grid')" id="view-mode-grid" class="flex-1 md:flex-initial px-4 py-1.5 rounded-xl text-xs font-bold bg-white text-purple-600 shadow-sm transition-all">
+                        <i class="fa-solid fa-border-all mr-1"></i> Grid
+                    </button>
+                    <button onclick="setStudyViewMode('card')" id="view-mode-card" class="flex-1 md:flex-initial px-4 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-purple-600 transition-all">
+                        <i class="fa-solid fa-clone mr-1"></i> Flip Card
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTAINER 1: FLASHCARD SINGLE CAROUSEL -->
+            <div id="study-single-card-view" class="hidden flex-col items-center justify-center min-h-[420px]">
+                <div class="w-full max-w-md perspective-1000">
+                    <div id="flashcard" class="relative w-full h-80 transform-style-3d cursor-pointer rounded-3xl shadow-2xl" onclick="toggleFlashcardFlip()">
+                        <!-- Front Face -->
+                        <div class="absolute inset-0 backface-hidden bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 rounded-3xl p-6 text-white flex flex-col justify-between items-center text-center border-4 border-white/20 shadow-xl">
+                            <div class="flex justify-between w-full">
+                                <span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold">N3 Kanji</span>
+                                <button onclick="event.stopPropagation(); toggleStarCurrentCard()" id="card-star-btn" class="text-yellow-300 text-2xl hover:scale-125 transition-transform">
+                                    <i class="fa-regular fa-star"></i>
+                                </button>
+                            </div>
+
+                            <div class="my-auto">
+                                <div id="card-kanji" class="font-jp text-8xl font-black mb-2 tracking-tight drop-shadow-md">政</div>
+                                <p class="text-xs uppercase tracking-widest text-pink-200 font-bold">Tap to Flip Card 🔄</p>
+                            </div>
+
+                            <div class="flex justify-between items-center w-full">
+                                <button onclick="event.stopPropagation(); speakCurrentKanji()" class="w-10 h-10 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-all">
+                                    <i class="fa-solid fa-volume-high"></i>
+                                </button>
+                                <span id="card-index-indicator" class="text-xs font-bold text-purple-200">1 / 370</span>
+                            </div>
+                        </div>
+
+                        <!-- Back Face -->
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-3xl p-6 text-slate-800 flex flex-col justify-between border-4 border-purple-200 shadow-xl">
+                            <div class="flex justify-between items-center border-b pb-2 border-slate-100">
+                                <span id="card-back-kanji" class="font-jp text-3xl font-black text-purple-600">政</span>
+                                <button onclick="event.stopPropagation(); toggleLearnedCurrentCard()" id="card-learned-btn" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border">
+                                    Mark Learned
+                                </button>
+                            </div>
+
+                            <div class="space-y-3 my-auto">
+                                <div>
+                                    <span class="text-[10px] uppercase font-black tracking-wider text-pink-500 block">English Meaning</span>
+                                    <p id="card-back-meaning" class="text-xl font-extrabold text-slate-800">Politics, Government</p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2 bg-purple-50 p-3 rounded-2xl border border-purple-100">
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-purple-500 block">Onyomi (Chinese)</span>
+                                        <p id="card-back-onyomi" class="font-jp font-bold text-sm text-slate-700">セイ, ショウ</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-purple-500 block">Kunyomi (Japanese)</span>
+                                        <p id="card-back-kunyomi" class="font-jp font-bold text-sm text-slate-700">まつりごと</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-center pt-2 border-t border-slate-100">
+                                <button onclick="event.stopPropagation(); speakCurrentKanji()" class="text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center gap-1">
+                                    <i class="fa-solid fa-volume-high"></i> Listen Pronunciation
+                                </button>
+                                <span class="text-xs font-medium text-slate-400">Tap to flip back</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flashcard Controls -->
+                <div class="flex items-center space-x-4 mt-6">
+                    <button onclick="prevFlashcard()" class="w-12 h-12 bg-white hover:bg-slate-100 text-purple-600 rounded-2xl shadow-md border border-slate-200 flex items-center justify-center font-bold text-lg btn-bounce">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <button onclick="speakCurrentKanji()" class="px-5 py-3 bg-cyan-500 hover:bg-cyan-400 text-white rounded-2xl shadow-md font-bold text-sm flex items-center space-x-2 btn-bounce">
+                        <i class="fa-solid fa-volume-high"></i>
+                        <span>Pronounce</span>
+                    </button>
+                    <button onclick="nextFlashcard()" class="w-12 h-12 bg-white hover:bg-slate-100 text-purple-600 rounded-2xl shadow-md border border-slate-200 flex items-center justify-center font-bold text-lg btn-bounce">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTAINER 2: GRID LIST VIEW -->
+            <div id="study-grid-view" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <!-- Dynamically populated Kanji Cards -->
+            </div>
+            
+            <div id="no-cards-msg" class="hidden text-center py-12 bg-white rounded-3xl border border-dashed border-slate-300">
+                <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-2"></i>
+                <p class="font-bold text-slate-600">No Kanji found matching your search or filter.</p>
+                <button onclick="resetStudyFilters()" class="mt-3 px-4 py-2 bg-purple-600 text-white rounded-xl text-xs font-bold">Reset Filters</button>
+            </div>
+        </section>
+
+        <!-- VIEW: QUIZ SETUP -->
+        <section id="view-quiz-setup" class="max-w-2xl mx-auto hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-100">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-tr from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-md">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-800">Quiz Settings</h2>
+                        <p class="text-xs text-slate-500 font-medium">Customize your N3 Kanji practice session</p>
+                    </div>
+                </div>
+
+                <form id="quiz-config-form" onsubmit="startQuiz(event)" class="space-y-6">
+                    <!-- Quiz Mode -->
+                    <div>
+                        <label class="block text-xs font-black uppercase text-slate-500 tracking-wider mb-2">Select Quiz Type</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <label class="relative flex flex-col p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl cursor-pointer hover:border-purple-400 transition-all has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50">
+                                <input type="radio" name="quizMode" value="kanjiToMeaning" checked class="sr-only">
+                                <span class="font-bold text-sm text-slate-800 mb-1">Kanji ➔ English</span>
+                                <span class="text-xs text-slate-500">Pick correct English meaning for Kanji</span>
+                            </label>
+                            <label class="relative flex flex-col p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl cursor-pointer hover:border-purple-400 transition-all has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50">
+                                <input type="radio" name="quizMode" value="meaningToKanji" class="sr-only">
+                                <span class="font-bold text-sm text-slate-800 mb-1">English ➔ Kanji</span>
+                                <span class="text-xs text-slate-500">Pick Kanji for English definition</span>
+                            </label>
+                            <label class="relative flex flex-col p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl cursor-pointer hover:border-purple-400 transition-all has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50">
+                                <input type="radio" name="quizMode" value="readingToKanji" class="sr-only">
+                                <span class="font-bold text-sm text-slate-800 mb-1">Reading ➔ Kanji</span>
+                                <span class="text-xs text-slate-500">Match Onyomi/Kunyomi to Kanji</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question Pool Source -->
+                    <div>
+                        <label class="block text-xs font-black uppercase text-slate-500 tracking-wider mb-2">Question Pool Filter</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <label class="flex items-center p-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl cursor-pointer hover:border-purple-400 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50">
+                                <input type="radio" name="quizPool" value="all" checked class="text-purple-600 focus:ring-purple-500">
+                                <span class="ml-2 font-bold text-xs text-slate-700">All 370 N3 Kanji</span>
+                            </label>
+                            <label class="flex items-center p-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl cursor-pointer hover:border-purple-400 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50">
+                                <input type="radio" name="quizPool" value="unlearned" class="text-purple-600 focus:ring-purple-500">
+                                <span class="ml-2 font-bold text-xs text-slate-700">Unlearned Only</span>
+                            </label>
+                            <label class="flex items-center p-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl cursor-pointer hover:border-purple-400 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50">
+                                <input type="radio" name="quizPool" value="starred" class="text-purple-600 focus:ring-purple-500">
+                                <span class="ml-2 font-bold text-xs text-slate-700">⭐ Starred Only</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question Count Selection -->
+                    <div>
+                        <label class="block text-xs font-black uppercase text-slate-500 tracking-wider mb-2">Number of Questions</label>
+                        <div class="grid grid-cols-4 gap-3">
+                            <label class="flex items-center justify-center p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl font-extrabold text-sm text-slate-700 cursor-pointer hover:border-purple-400 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-600 has-[:checked]:text-white">
+                                <input type="radio" name="quizCount" value="10" checked class="sr-only"> 10
+                            </label>
+                            <label class="flex items-center justify-center p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl font-extrabold text-sm text-slate-700 cursor-pointer hover:border-purple-400 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-600 has-[:checked]:text-white">
+                                <input type="radio" name="quizCount" value="20" class="sr-only"> 20
+                            </label>
+                            <label class="flex items-center justify-center p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl font-extrabold text-sm text-slate-700 cursor-pointer hover:border-purple-400 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-600 has-[:checked]:text-white">
+                                <input type="radio" name="quizCount" value="50" class="sr-only"> 50
+                            </label>
+                            <label class="flex items-center justify-center p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl font-extrabold text-sm text-slate-700 cursor-pointer hover:border-purple-400 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-600 has-[:checked]:text-white">
+                                <input type="radio" name="quizCount" value="100" class="sr-only"> 100
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Audio Option Toggle -->
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-volume-high text-purple-600 text-lg"></i>
+                            <div>
+                                <span class="font-bold text-sm text-slate-800 block">Audio Pronunciation</span>
+                                <span class="text-xs text-slate-500">Auto-read Kanji on question load</span>
+                            </div>
+                        </div>
+                        <input type="checkbox" id="quiz-audio-toggle" checked class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500">
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 text-slate-900 font-extrabold text-lg rounded-2xl shadow-lg bright-shadow-green hover:opacity-95 transition-all btn-bounce flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>Start Practice Quiz</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- VIEW: LIVE MCQ QUIZ -->
+        <section id="view-quiz-active" class="max-w-2xl mx-auto hidden space-y-6">
+            <!-- Quiz Progress & Streak Bar -->
+            <div class="bg-white rounded-3xl p-4 shadow-md border border-slate-100 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Question</span>
+                    <span id="quiz-progress-text" class="text-lg font-extrabold text-purple-600">1 / 10</span>
+                </div>
+
+                <!-- Streak Counter -->
+                <div class="flex items-center space-x-1.5 bg-amber-50 px-3 py-1.5 rounded-2xl border border-amber-200">
+                    <i class="fa-solid fa-fire text-amber-500 animate-bounce"></i>
+                    <span id="quiz-streak-count" class="font-extrabold text-sm text-amber-700">0</span>
+                    <span class="text-xs text-amber-600 font-medium">Streak</span>
+                </div>
+
+                <div>
+                    <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider block text-right">Score</span>
+                    <span id="quiz-score-text" class="text-lg font-extrabold text-emerald-500 text-right">0</span>
+                </div>
+            </div>
+
+            <!-- Quiz Card -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-100 relative overflow-hidden">
+                <!-- Prompt Area -->
+                <div id="quiz-prompt-card" class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-8 text-center text-white mb-6 shadow-md relative">
+                    <button onclick="speakQuizPrompt()" class="absolute right-4 top-4 bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <span id="quiz-prompt-sub" class="text-xs font-bold text-purple-200 uppercase tracking-widest block mb-2">Identify the English Meaning</span>
+                    <h2 id="quiz-prompt-main" class="font-jp text-6xl sm:text-7xl font-black drop-shadow-sm">政</h2>
+                </div>
+
+                <!-- MCQ Options Grid -->
+                <div id="quiz-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <!-- Dynamic Answer Buttons -->
+                </div>
+
+                <!-- Feedback & Explanation Banner -->
+                <div id="quiz-feedback-box" class="hidden mt-6 p-4 rounded-2xl transition-all border text-center">
+                    <p id="quiz-feedback-title" class="font-extrabold text-base mb-1"></p>
+                    <p id="quiz-feedback-detail" class="text-xs font-semibold"></p>
+                </div>
+
+                <!-- Action Button (Next Question) -->
+                <div class="mt-6 flex justify-end">
+                    <button id="quiz-next-btn" onclick="nextQuestion()" class="hidden px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-extrabold rounded-2xl shadow-md transition-all btn-bounce items-center space-x-2">
+                        <span>Next Question</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: QUIZ RESULTS SUMMARY -->
+        <section id="view-quiz-results" class="max-w-xl mx-auto hidden space-y-6">
+            <div class="bg-white rounded-3xl p-8 shadow-2xl border border-slate-100 text-center">
+                <div class="w-20 h-20 bg-gradient-to-tr from-yellow-400 to-amber-500 text-slate-900 rounded-3xl mx-auto flex items-center justify-center text-4xl font-black shadow-lg mb-4">
+                    🏆
+                </div>
+                
+                <h2 class="text-3xl font-extrabold text-slate-800 mb-1">Quiz Completed!</h2>
+                <p id="results-subtitle" class="text-xs font-bold text-slate-500 mb-6">Great job completing your practice session!</p>
+
+                <!-- Score Banner -->
+                <div class="bg-purple-50 rounded-2xl p-6 mb-6 border border-purple-100">
+                    <span class="text-xs font-bold uppercase tracking-wider text-purple-500 block mb-1">Your Accuracy</span>
+                    <div id="results-accuracy-pct" class="text-5xl font-black text-purple-700 mb-2">90%</div>
+                    <p id="results-score-count" class="text-xs font-extrabold text-slate-600">You scored 9 out of 10 correctly</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase block">Max Streak</span>
+                        <span id="results-max-streak" class="text-xl font-black text-amber-500">5 🔥</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase block">Time Taken</span>
+                        <span id="results-time-taken" class="text-xl font-black text-cyan-600">0:45</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="switchTab('quiz-setup')" class="flex-1 py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold rounded-2xl shadow-md btn-bounce">
+                        Try Another Quiz
+                    </button>
+                    <button onclick="switchTab('study')" class="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold rounded-2xl shadow-sm btn-bounce">
+                        Review N3 Kanji
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-50 md:hidden px-4 py-2 flex justify-around items-center shadow-lg">
+        <button onclick="switchTab('dashboard')" id="nav-btn-dashboard" class="flex flex-col items-center text-purple-600 font-bold text-[10px]">
+            <i class="fa-solid fa-house text-lg mb-0.5"></i>
+            <span>Home</span>
+        </button>
+        <button onclick="switchTab('study')" id="nav-btn-study" class="flex flex-col items-center text-slate-400 font-bold text-[10px] hover:text-purple-600">
+            <i class="fa-solid fa-book-open text-lg mb-0.5"></i>
+            <span>Study</span>
+        </button>
+        <button onclick="switchTab('quiz-setup')" id="nav-btn-quiz" class="flex flex-col items-center text-slate-400 font-bold text-[10px] hover:text-purple-600">
+            <i class="fa-solid fa-bolt text-lg mb-0.5"></i>
+            <span>Quiz</span>
+        </button>
+    </nav>
+
+    <script>
+        /* Comprehensive Embedded JLPT N3 Kanji Dataset (370 Kanji) */
+        const N3_KANJI_DATA = [
+{ "id": 1, "k": "政", "o": "セイ, ショウ", "ku": "まつりごと", "m": "politics, government" },
+{ "id": 2, "k": "議", "o": "ギ", "ku": "", "m": "deliberation, consultation, debate" },
+{ "id": 3, "k": "民", "o": "ミン", "ku": "たみ", "m": "people, nation, subjects" },
+{ "id": 4, "k": "連", "o": "レン", "ku": "つら.なる, つ.れる", "m": "take along, lead, join, connect" },
+{ "id": 5, "k": "対", "o": "タイ, ツイ", "ku": "こた.える, むか.う", "m": "opposite, even, equal, versus, anti-" },
+{ "id": 6, "k": "部", "o": "ブ", "ku": "べ", "m": "section, bureau, dept, class, copy" },
+{ "id": 7, "k": "合", "o": "ゴウ, ガッ, カッ", "ku": "あ.う, あ.わせる", "m": "fit, suit, join, 0.1 gou" },
+{ "id": 8, "k": "市", "o": "シ", "ku": "いち", "m": "city, town, market" },
+{ "id": 9, "k": "内", "o": "ナイ, ダイ", "ku": "うち", "m": "inside, within, between, among" },
+{ "id": 10, "k": "相", "o": "ソウ, ショウ", "ku": "あい", "m": "inter-, mutual, together, minister of state" },
+{ "id": 11, "k": "定", "o": "テイ, ジョウ", "ku": "さだ.める, さだ.まる", "m": "determine, fix, establish, decide" },
+{ "id": 12, "k": "回", "o": "カイ, エ", "ku": "まわ.る, まわ.す", "m": "-times, round, revolve, counter" },
+{ "id": 13, "k": "選", "o": "セン", "ku": "えら.ぶ", "m": "elect, select, choose, prefer" },
+{ "id": 14, "k": "米", "o": "ベイ, マイ", "ku": "こめ", "m": "rice, USA, meter" },
+{ "id": 15, "k": "実", "o": "ジツ", "ku": "み, みの.る", "m": "reality, truth" },
+{ "id": 16, "k": "関", "o": "カン", "ku": "せき, かか.わる", "m": "connection, barrier, gateway, involve" },
+{ "id": 17, "k": "決", "o": "ケツ", "ku": "き.める, き.まる", "m": "decide, fix, agree upon, appoint" },
+{ "id": 18, "k": "全", "o": "ゼン", "ku": "まった.く, すべ.て", "m": "whole, entire, all, complete" },
+{ "id": 19, "k": "表", "o": "ヒョウ", "ku": "おもて, あらわ.す", "m": "surface, table, chart, diagram, express" },
+{ "id": 20, "k": "戦", "o": "セン", "ku": "いくさ, たたか.う", "m": "war, battle, match" },
+{ "id": 21, "k": "経", "o": "ケイ, キョウ", "ku": "へ.る, た.つ", "m": "pass through, expire, warp, manage" },
+{ "id": 22, "k": "最", "o": "サイ", "ku": "もっと.も", "m": "utmost, most, extreme" },
+{ "id": 23, "k": "現", "o": "ゲン", "ku": "あらわ.れる, あらわ.す", "m": "present, existing, actual, appear" },
+{ "id": 24, "k": "調", "o": "チョウ", "ku": "しら.べる, ととの.う", "m": "tune, tone, prepare, investigate" },
+{ "id": 25, "k": "化", "o": "カ, ケ", "ku": "ば.ける, ば.かす", "m": "change, take the form of, -ization" },
+{ "id": 26, "k": "当", "o": "トウ", "ku": "あ.たる, あ.てる", "m": "hit, right, appropriate, this" },
+{ "id": 27, "k": "約", "o": "ヤク", "ku": "", "m": "promise, approximately, shrink" },
+{ "id": 28, "k": "首", "o": "シュ", "ku": "くび", "m": "neck, head, leader" },
+{ "id": 29, "k": "法", "o": "ホウ, ハッ, ホッ", "ku": "のり", "m": "method, law, rule, principle" },
+{ "id": 30, "k": "性", "o": "セイ, ショウ", "ku": "さが", "m": "sex, gender, nature" },
+{ "id": 31, "k": "的", "o": "テキ", "ku": "まと", "m": "mark, target, object, -like" },
+{ "id": 32, "k": "要", "o": "ヨウ", "ku": "い.る, かなめ", "m": "need, main point, essence" },
+{ "id": 33, "k": "制", "o": "セイ", "ku": "", "m": "system, law, rule, control" },
+{ "id": 34, "k": "治", "o": "ジ, チ", "ku": "おさ.める, なお.る", "m": "reign, cure, heal, govern" },
+{ "id": 35, "k": "務", "o": "ム", "ku": "つと.める", "m": "task, duties, serve" },
+{ "id": 36, "k": "成", "o": "セイ, ジョウ", "ku": "な.る, な.す", "m": "turn into, become, get, grow" },
+{ "id": 37, "k": "期", "o": "キ, ゴ", "ku": "", "m": "period, time, date, term" },
+{ "id": 38, "k": "取", "o": "シュ", "ku": "と.る", "m": "take, fetch, take up" },
+{ "id": 39, "k": "都", "o": "ト, ツ", "ku": "みやこ", "m": "metropolis, capital, all" },
+{ "id": 40, "k": "和", "o": "ワ, オ", "ku": "やわ.らぐ, なご.む", "m": "harmony, Japanese style, peace" },
+{ "id": 41, "k": "機", "o": "キ", "ku": "はた", "m": "machine, airplane, opportunity" },
+{ "id": 42, "k": "平", "o": "ヘイ, ビョウ", "ku": "たい.ら, ひら", "m": "even, flat, peace" },
+{ "id": 43, "k": "加", "o": "カ", "ku": "くわ.える, くわ.わる", "m": "add, addition, increase, join" },
+{ "id": 44, "k": "受", "o": "ジュ", "ku": "う.ける, う.かる", "m": "accept, undergo, answer, receive" },
+{ "id": 45, "k": "続", "o": "ゾク", "ku": "つづ.く, つづ.ける", "m": "continue, series, sequel" },
+{ "id": 46, "k": "進", "o": "シン", "ku": "すす.む, すす.める", "m": "advance, proceed, progress" },
+{ "id": 47, "k": "数", "o": "スウ, ス", "ku": "かず, かぞ.える", "m": "number, strength, count" },
+{ "id": 48, "k": "記", "o": "キ", "ku": "しる.す", "m": "scribe, account, narrative, record" },
+{ "id": 49, "k": "初", "o": "ショ", "ku": "はじ.め, はつ", "m": "first time, beginning" },
+{ "id": 50, "k": "指", "o": "シ", "ku": "ゆび, さ.す", "m": "finger, point to, indicate" },
+{ "id": 51, "k": "権", "o": "ケン, ゴン", "ku": "おもり", "m": "authority, power, rights" },
+{ "id": 52, "k": "支", "o": "シ", "ku": "ささ.える", "m": "branch, support, sustain" },
+{ "id": 53, "k": "産", "o": "サン", "ku": "う.む, む.す", "m": "products, bear, give birth" },
+{ "id": 54, "k": "点", "o": "テン", "ku": "つける, たてる", "m": "spot, point, mark, decimal point" },
+{ "id": 55, "k": "報", "o": "ホウ", "ku": "むく.いる", "m": "report, news, reward" },
+{ "id": 56, "k": "済", "o": "サイ, セイ", "ku": "す.む, す.ます", "m": "settle, relieve, finish" },
+{ "id": 57, "k": "活", "o": "カツ", "ku": "い.きる, い.かす", "m": "living, activity, lively" },
+{ "id": 58, "k": "原", "o": "ゲン", "ku": "はら", "m": "original, primitive, field" },
+{ "id": 59, "k": "共", "o": "キョウ", "ku": "とも", "m": "together, both, neither" },
+{ "id": 60, "k": "得", "o": "トク", "ku": "え.る, う.る", "m": "gain, get, acquire, able to" },
+{ "id": 61, "k": "解", "o": "カイ, ゲ", "ku": "と.く, と.かす", "m": "unravel, explanation, solve" },
+{ "id": 62, "k": "交", "o": "コウ", "ku": "まじ.わる, ま.ぜる", "m": "mingle, mixing, association, cross" },
+{ "id": 63, "k": "資", "o": "シ", "ku": "", "m": "assets, resources, capital, funds" },
+{ "id": 64, "k": "予", "o": "ヨ, シャ", "ku": "あらかじ.め", "m": "beforehand, previous, myself" },
+{ "id": 65, "k": "向", "o": "コウ", "ku": "む.く, むか.い", "m": "facing, beyond, head towards" },
+{ "id": 66, "k": "際", "o": "サイ", "ku": "きわ", "m": "occasion, side, edge, time" },
+{ "id": 67, "k": "勝", "o": "ショウ", "ku": "か.つ, まさ.る", "m": "victory, win, excel" },
+{ "id": 68, "k": "面", "o": "メン", "ku": "おも, おもて", "m": "mask, face, features, surface" },
+{ "id": 69, "k": "告", "o": "コク", "ku": "つ.げる", "m": "revelation, tell, inform" },
+{ "id": 70, "k": "反", "o": "ハン, ホン", "ku": "そ.る, そ.らす", "m": "anti-, oppose, reverse" },
+{ "id": 71, "k": "判", "o": "ハン, バン", "ku": "わか.る", "m": "judgement, signature, stamp" },
+{ "id": 72, "k": "認", "o": "ニン", "ku": "认.める", "m": "acknowledge, witness, recognize" },
+{ "id": 73, "k": "参", "o": "サン, シン", "ku": "まい.る", "m": "nonplussed, participate, visit" },
+{ "id": 74, "k": "利", "o": "リ", "ku": "き.く", "m": "profit, advantage, benefit" },
+{ "id": 75, "k": "組", "o": "ソ", "ku": "く.む, くみ", "m": "association, assemble, group" },
+{ "id": 76, "k": "信", "o": "シン", "ku": "", "m": "trust, request, faith, truth" },
+{ "id": 77, "k": "在", "o": "ザイ", "ku": "あ.る", "m": "exist, outskirts, suburbs, locate" },
+{ "id": 78, "k": "件", "o": "ケン", "ku": "くだん", "m": "affair, case, matter" },
+{ "id": 79, "k": "側", "o": "ソク", "ku": "がわ, そば", "m": "side, lean, oppose" },
+{ "id": 80, "k": "任", "o": "ニン", "ku": "まか.せる, まか.す", "m": "responsibility, duty, entrust" },
+{ "id": 81, "k": "引", "o": "イン", "ku": "ひ.く, ひ.ける", "m": "pull, tug, jerk, quote" },
+{ "id": 82, "k": "求", "o": "キュウ, グ", "ku": "モト.む", "m": "request, want, wish for, demand" },
+{ "id": 83, "k": "所", "o": "ショ", "ku": "ところ", "m": "place, extent" },
+{ "id": 84, "k": "次", "o": "ジ, シ", "ku": "つぎ, つ.ぐ", "m": "next, order, sequence" },
+{ "id": 85, "k": "昨", "o": "サク", "ku": "", "m": "yesterday, previous" },
+{ "id": 86, "k": "論", "o": "ロン", "ku": "", "m": "argument, discourse, theory" },
+{ "id": 87, "k": "官", "o": "カン", "ku": "", "m": "bureaucrat, the government" },
+{ "id": 88, "k": "増", "o": "ゾウ", "ku": "ま.す, ふ.える", "m": "increase, add, augment" },
+{ "id": 89, "k": "係", "o": "ケイ", "ku": "かか.る, かかり", "m": "person in charge, connection" },
+{ "id": 90, "k": "感", "o": "カン", "ku": "", "m": "emotion, feeling, sensation" },
+{ "id": 91, "k": "情", "o": "ジョウ, セイ", "ku": "なさ.け", "m": "feelings, emotion, passion, sympathy" },
+{ "id": 92, "k": "投", "o": "トウ", "ku": "な.げる", "m": "throw, discard, abandon" },
+{ "id": 93, "k": "示", "o": "ジ, シ", "ku": "しめ.す", "m": "show, indicate, point out" },
+{ "id": 94, "k": "変", "o": "ヘン", "ku": "か.わる, か.える", "m": "unusual, change, strange" },
+{ "id": 95, "k": "打", "o": "ダ", "ku": "う.つ, ぶ.つ", "m": "strike, hit, knock" },
+{ "id": 96, "k": "直", "o": "チョク, ジキ", "ku": "ただ.ちに, なお.す", "m": "straightaway, honesty, repair" },
+{ "id": 97, "k": "両", "o": "リョウ", "ku": "てる", "m": "both, counter for vehicles" },
+{ "id": 98, "k": "式", "o": "シキ", "ku": "", "m": "style, ceremony, formula, rite" },
+{ "id": 99, "k": "確", "o": "カク, コウ", "ku": "たしか, たしか.める", "m": "assurance, firm, tight, certain" },
+{ "id": 100, "k": "果", "o": "カ", "ku": "は.たす, は.てる", "m": "fruit, reward, carry out, achieve" },
+{ "id": 101, "k": "容", "o": "ヨウ", "ku": "い.れる", "m": "contain, form, looks, content" },
+{ "id": 102, "k": "必", "o": "ヒツ", "ku": "かなら.ず", "m": "certain, inevitable, necessary" },
+{ "id": 103, "k": "演", "o": "エン", "ku": "", "m": "performance, act, play, render" },
+{ "id": 104, "k": "歳", "o": "サイ, セイ", "ku": "とし", "m": "year-end, age, opportunity" },
+{ "id": 105, "k": "争", "o": "ソウ", "ku": "あらそ.う", "m": "contend, dispute, argue" },
+{ "id": 106, "k": "談", "o": "ダン", "ku": "", "m": "discuss, talk" },
+{ "id": 107, "k": "能", "o": "ノウ", "ku": "よ.く", "m": "ability, talent, skill, Noh play" },
+{ "id": 108, "k": "位", "o": "イ", "ku": "くらい", "m": "rank, grade, throne, crown" },
+{ "id": 109, "k": "置", "o": "チ", "ku": "お.く", "m": "placement, put, set, deposit" },
+{ "id": 110, "k": "流", "o": "リュウ, ル", "ku": "なが.れる, なが.す", "m": "current, flow, sink" },
+{ "id": 111, "k": "格", "o": "カク, コウ", "ku": "", "m": "status, rank, capacity, character" },
+{ "id": 112, "k": "疑", "o": "ギ", "ku": "うたが.う", "m": "doubt, distrust, be suspicious" },
+{ "id": 113, "k": "過", "o": "カ", "ku": "す.ぎる, あやま.ち", "m": "overdo, exceed, go beyond" },
+{ "id": 114, "k": "局", "o": "キョク", "ku": "つぼね", "m": "bureau, board, office, affair" },
+{ "id": 115, "k": "放", "o": "ホウ", "ku": "放.つ, はな.す", "m": "set free, release, fire, emit" },
+{ "id": 116, "k": "常", "o": "ジョウ", "ku": "つね, とこ", "m": "usual, ordinary, normal" },
+{ "id": 117, "k": "状", "o": "ジョウ", "ku": "", "m": "status quo, conditions, letter" },
+{ "id": 118, "k": "球", "o": "キュウ", "ku": "たま", "m": "ball, sphere" },
+{ "id": 119, "k": "職", "o": "ショク", "ku": "", "m": "post, employment, work" },
+{ "id": 120, "k": "与", "o": "ヨ", "ku": "あた.える", "m": "give, award, impart, provide" },
+{ "id": 121, "k": "供", "o": "キョウ, ク", "ku": "そな.える, とも", "m": "submit, offer, present, accompany" },
+{ "id": 122, "k": "役", "o": "ヤク, エキ", "ku": "", "m": "duty, service, role" },
+{ "id": 123, "k": "構", "o": "コウ", "ku": "かま.える, かま.う", "m": "posture, build, pretend" },
+{ "id": 124, "k": "割", "o": "カツ", "ku": "わ.る, わり", "m": "proportion, divide, cut" },
+{ "id": 125, "k": "身", "o": "シン", "ku": "み", "m": "somebody, person, one's station" },
+{ "id": 126, "k": "費", "o": "ヒ", "ku": "つい.やす", "m": "expense, cost, spend" },
+{ "id": 127, "k": "付", "o": "フ", "ku": "つ.ける, つ.く", "m": "attach, refer to, append" },
+{ "id": 128, "k": "由", "o": "ユ, ユウ", "ku": "よし", "m": "wherefore, a reason" },
+{ "id": 129, "k": "説", "o": "セツ, ゼイ", "ku": "と.く", "m": "opinion, theory, explain" },
+{ "id": 130, "k": "難", "o": "ナン", "ku": "むずか.しい, かた.い", "m": "difficult, impossible, trouble" },
+{ "id": 131, "k": "優", "o": "ユウ, ユ", "ku": "やさ.しい, すぐ.れる", "m": "tenderness, excel, surpass" },
+{ "id": 132, "k": "夫", "o": "フ, フウ", "ku": "オット", "m": "husband, man" },
+{ "id": 133, "k": "収", "o": "シュウ", "ku": "おさ.める, おさ.まる", "m": "income, obtain, reap, pay" },
+{ "id": 134, "k": "断", "o": "ダン", "ku": "た.つ, ことわ.る", "m": "sever, cut off, refuse, decision" },
+{ "id": 135, "k": "石", "o": "セキ, シャク", "ku": "いし", "m": "stone" },
+{ "id": 136, "k": "違", "o": "イ", "ku": "ちが.う, ちが.える", "m": "difference, differ" },
+{ "id": 137, "k": "消", "o": "ショウ", "ku": "き.える, け.す", "m": "extinguish, blow out, turn off" },
+{ "id": 138, "k": "神", "o": "シン, ジン", "ku": "かみ, こう", "m": "gods, mind, soul" },
+{ "id": 139, "k": "番", "o": "バン", "ku": "", "m": "turn, number in a series" },
+{ "id": 140, "k": "規", "o": "キ", "ku": "", "m": "standard, measure" },
+{ "id": 141, "k": "術", "o": "ジュツ", "ku": "すべ", "m": "art, technique, skill, means" },
+{ "id": 142, "k": "備", "o": "ビ", "ku": "そな.える, そな.わる", "m": "equip, provision, preparation" },
+{ "id": 143, "k": "宅", "o": "タク", "ku": "", "m": "home, house, residence" },
+{ "id": 144, "k": "害", "o": "ガイ", "ku": "", "m": "harm, injury, damage" },
+{ "id": 145, "k": "配", "o": "ハイ", "ku": "くば.る", "m": "distribute, spouse, exile" },
+{ "id": 146, "k": "警", "o": "ケイ", "ku": "いまし.める", "m": "admonish, commandment, guard" },
+{ "id": 147, "k": "育", "o": "イク", "ku": "そだ.つ, そだ.てる", "m": "bring up, grow up, raise" },
+{ "id": 148, "k": "席", "o": "セキ", "ku": "ムシロ", "m": "seat, mat, occasion" },
+{ "id": 149, "k": "訪", "o": "ホウ", "ku": "オトズ.レル, たず.ねる", "m": "call on, visit, look up" },
+{ "id": 150, "k": "乗", "o": "ジョウ", "ku": "の.る, の.せる", "m": "ride, power, board, counter for vehicles" },
+{ "id": 151, "k": "残", "o": "ザン", "ku": "のこ.る, のこ.す", "m": "remainder, leftover, balance" },
+{ "id": 152, "k": "想", "o": "ソウ, ソ", "ku": "オモ.ウ", "m": "concept, think, idea, thought" },
+{ "id": 153, "k": "声", "o": "セイ, ショウ", "ku": "こえ", "m": "voice" },
+{ "id": 154, "k": "念", "o": "ネン", "ku": "", "m": "wish, sense, idea, thought" },
+{ "id": 155, "k": "助", "o": "ジョ", "ku": "たす.ける, たす.かる", "m": "help, rescue, assist" },
+{ "id": 156, "k": "労", "o": "ロウ", "ku": "ねぎら.う", "m": "labor, thank for, reward for" },
+{ "id": 157, "k": "例", "o": "レイ", "ku": "たと.える", "m": "example, custom, usage" },
+{ "id": 158, "k": "然", "o": "ゼン, ネン", "ku": "しか", "m": "sort of thing, so, if so" },
+{ "id": 159, "k": "限", "o": "ゲン", "ku": "かぎ.る", "m": "limit, restrict, to best of ability" },
+{ "id": 160, "k": "追", "o": "ツイ", "ku": "お.う", "m": "chase, drive away, pursue" },
+{ "id": 161, "k": "商", "o": "ショウ", "ku": "あきな.う", "m": "make a deal, selling, trade" },
+{ "id": 162, "k": "葉", "o": "ヨウ", "ku": "は", "m": "leaf, plane, lobe, needle" },
+{ "id": 163, "k": "伝", "o": "デン", "ku": "つた.わる, つた.える", "m": "transmit, go along, walk along" },
+{ "id": 164, "k": "働", "o": "ドウ", "ku": "はたら.く", "m": "work, labor" },
+{ "id": 165, "k": "形", "o": "ケイ, ギョウ", "ku": "かた, かたち", "m": "shape, form, style" },
+{ "id": 166, "k": "景", "o": "ケイ", "ku": "", "m": "scenery, view" },
+{ "id": 167, "k": "落", "o": "ラク", "ku": "お.ちる, お.とす", "m": "fall, drop, come down" },
+{ "id": 168, "k": "好", "o": "コウ", "ku": "コノ.ム, す.く", "m": "fond, pleasing, like" },
+{ "id": 169, "k": "退", "o": "タイ", "ku": "しりぞ.く, しりぞ.ける", "m": "retreat, withdraw, retire" },
+{ "id": 170, "k": "頭", "o": "トウ, ズ", "ku": "あたま, かしら", "m": "head, counter for large animals" },
+{ "id": 171, "k": "負", "o": "フ", "ku": "ま.ける, ま.かす", "m": "defeat, negative, minus, bear" },
+{ "id": 172, "k": "渡", "o": "ト", "ku": "わた.る, わた.す", "m": "transit, ford, ferry, cross" },
+{ "id": 173, "k": "失", "o": "シツ", "ku": "うしな.う", "m": "lose, error, fault, disadvantage" },
+{ "id": 174, "k": "差", "o": "サ", "ku": "さ.す", "m": "distinction, difference, variation" },
+{ "id": 175, "k": "末", "o": "マツ, バツ", "ku": "すえ", "m": "end, close, tip, powder" },
+{ "id": 176, "k": "守", "o": "シュ, ス", "ku": "まも.る, もり", "m": "guard, protect, defend, obey" },
+{ "id": 177, "k": "若", "o": "ジャク, ニャク", "ku": "わか.い, もし", "m": "young, if, perhaps" },
+{ "id": 178, "k": "種", "o": "シュ", "ku": "たね", "m": "species, kind, class, seed" },
+{ "id": 179, "k": "美", "o": "ビ, ミ", "ku": "うつく.しい", "m": "beauty, beautiful" },
+{ "id": 180, "k": "命", "o": "メイ, ミョウ", "ku": "いのち", "m": "fate, command, decree, life" },
+{ "id": 181, "k": "福", "o": "フク", "ku": "", "m": "blessing, fortune, luck, wealth" },
+{ "id": 182, "k": "望", "o": "ボウ, モウ", "ku": "のぞ.む", "m": "ambition, full moon, hope, desire" },
+{ "id": 183, "k": "非", "o": "ヒ", "ku": "あら.ず", "m": "un-, mistake, negative, wrong" },
+{ "id": 184, "k": "観", "o": "カン", "ku": "み.る", "m": "look, appearance, view" },
+{ "id": 185, "k": "因", "o": "イン", "ku": "よ.る", "m": "cause, factor, depend on" },
+{ "id": 186, "k": "病", "o": "ビョウ, ヘイ", "ku": "や.む, やまい", "m": "ill, sick" },
+{ "id": 187, "k": "院", "o": "イン", "ku": "", "m": "institution, temple, mansion, school" },
+{ "id": 188, "k": "愛", "o": "アイ", "ku": "いとし.い", "m": "love, affection, favorite" },
+{ "id": 189, "k": "特", "o": "トク", "ku": "", "m": "special" },
+{ "id": 190, "k": "産", "o": "サン", "ku": "う.む", "m": "products, bear, give birth" },
+{ "id": 191, "k": "調", "o": "チョウ", "ku": "しら.べる", "m": "tune, investigate" },
+{ "id": 192, "k": "富", "o": "フ, フウ", "ku": "とみ, と.む", "m": "wealth, enrich, abundant" },
+{ "id": 193, "k": "彼", "o": "ヒ", "ku": "かれ, かの", "m": "he, that, the comparison" },
+{ "id": 194, "k": "答", "o": "トウ", "ku": "こた.える, こた.え", "m": "solution, answer" },
+{ "id": 195, "k": "返", "o": "ヘン", "ku": "かえ.す, かえ.る", "m": "return, answer, fade" },
+{ "id": 196, "k": "申", "o": "シン", "ku": "もう.す", "m": "have the honor to, speak, report" },
+{ "id": 197, "k": "利", "o": "リ", "ku": "き.く", "m": "profit, advantage" },
+{ "id": 198, "k": "参", "o": "サン", "ku": "まい.る", "m": "participate, attend, visit" },
+{ "id": 199, "k": "果", "o": "カ", "ku": "は.たす", "m": "fruit, achieve, accomplish" },
+{ "id": 200, "k": "積", "o": "セキ", "ku": "つ.む, つ.もる", "m": "volume, product (math), acreage, contents" },
+{ "id": 201, "k": "残", "o": "ザン", "ku": "のこ.る", "m": "remainder, leftover" },
+{ "id": 202, "k": "再", "o": "サイ, サ", "ku": "ふたた.び", "m": "again, twice, second time" },
+{ "id": 203, "k": "与", "o": "ヨ", "ku": "あた.える", "m": "give, award, grant" },
+{ "id": 204, "k": "求", "o": "キュウ", "ku": "もと.む", "m": "demand, request, seek" },
+{ "id": 205, "k": "役", "o": "ヤク", "ku": "", "m": "service, duty, role" },
+{ "id": 206, "k": "違", "o": "イ", "ku": "ちが.う", "m": "difference, differ" },
+{ "id": 207, "k": "受", "o": "ジュ", "ku": "う.ける", "m": "receive, accept" },
+{ "id": 208, "k": "号", "o": "ゴウ", "ku": "さけ.ぶ", "m": "nickname, number, item, title" },
+{ "id": 209, "k": "悲", "o": "ヒ", "ku": "かな.しい, かな.しむ", "m": "grieve, sad, deplore" },
+{ "id": 210, "k": "静", "o": "セイ, ジョウ", "ku": "しず.か, しず.まる", "m": "quiet" },
+{ "id": 211, "k": "払", "o": "フツ", "ku": "はら.う", "m": "pay, clear out, prune, banish" },
+{ "id": 212, "k": "相", "o": "ソウ, ショウ", "ku": "あい", "m": "mutual, together" },
+{ "id": 213, "k": "打", "o": "ダ", "ku": "う.つ", "m": "strike, hit" },
+{ "id": 214, "k": "投", "o": "トウ", "ku": "な.げる", "m": "throw, discard" },
+{ "id": 215, "k": "勝", "o": "ショウ", "ku": "か.つ", "m": "win, victory" },
+{ "id": 216, "k": "負", "o": "フ", "ku": "ま.ける", "m": "defeat, lose, bear" },
+{ "id": 217, "k": "録", "o": "ロク", "ku": "", "m": "record" },
+{ "id": 218, "k": "画", "o": "ガ, カク", "ku": "えが.く, かく.する", "m": "brush-stroke, picture" },
+{ "id": 219, "k": "写", "o": "シャ", "ku": "うつ.す, うつ.る", "m": "copy, be photographed, describe" },
+{ "id": 220, "k": "真", "o": "シン", "ku": "ま, まこと", "m": "true, reality, pure" },
+{ "id": 221, "k": "真", "o": "シン", "ku": "ま", "m": "truth, exact" },
+{ "id": 222, "k": "集", "o": "シュウ", "ku": "あつ.まる, あつ.める", "m": "gather, meet, congregate" },
+{ "id": 223, "k": "進", "o": "シン", "ku": "すす.む", "m": "advance, proceed" },
+{ "id": 224, "k": "返", "o": "ヘン", "ku": "かえ.す", "m": "return, reply" },
+{ "id": 225, "k": "配", "o": "ハイ", "ku": "くば.る", "m": "distribute, share" },
+{ "id": 226, "k": "次", "o": "ジ", "ku": "つぎ", "m": "next, order" },
+{ "id": 227, "k": "両", "o": "リョウ", "ku": "", "m": "both, pair" },
+{ "id": 228, "k": "全", "o": "ゼン", "ku": "すべて", "m": "all, whole" },
+{ "id": 229, "k": "向", "o": "コウ", "ku": "む.く", "m": "face, head towards" },
+{ "id": 230, "k": "走", "o": "ソウ", "ku": "はし.る", "m": "run" },
+{ "id": 231, "k": "起", "o": "キ", "ku": "お.きる, お.こす", "m": "wake up, get up, rouse" },
+{ "id": 232, "k": "歩", "o": "ホ, ブ", "ku": "ある.く, あゆ.む", "m": "walk, counter for steps" },
+{ "id": 233, "k": "止", "o": "シ", "ku": "と.まる, と.める", "m": "stop, halt" },
+{ "id": 234, "k": "重", "o": "ジュウ, チョウ", "ku": "おも.い, かさ.なる", "m": "heavy, heap up, pile up" },
+{ "id": 235, "k": "軽", "o": "ケイ", "ku": "かる.い, かろ.やか", "m": "lightly, trifling, unimportant" },
+{ "id": 236, "k": "動", "o": "ドウ", "ku": "うご.く, うご.かす", "m": "move, motion, change" },
+{ "id": 237, "k": "働", "o": "ドウ", "ku": "はたら.く", "m": "work" },
+{ "id": 238, "k": "特", "o": "トク", "ku": "", "m": "special" },
+{ "id": 239, "k": "別", "o": "ベツ", "ku": "わか.れる", "m": "separate, branch off, diverge" },
+{ "id": 240, "k": "引", "o": "イン", "ku": "ひ.く", "m": "pull, draw" },
+{ "id": 241, "k": "開", "o": "カイ", "ku": "ひら.く, あ.く", "m": "open, unfold, unseal" },
+{ "id": 242, "k": "閉", "o": "ヘイ", "ku": "と.じる, し.める", "m": "closed, shut" },
+{ "id": 243, "k": "使", "o": "シ", "ku": "つか.う", "m": "use, send on a mission" },
+{ "id": 244, "k": "始", "o": "シ", "ku": "はじ.める, はじ.まる", "m": "commence, begin" },
+{ "id": 245, "k": "終", "o": "シュウ", "ku": "お.わる, お.わる", "m": "end, finish" },
+{ "id": 246, "k": "考", "o": "コウ", "ku": "かんが.える", "m": "consider, think over" },
+{ "id": 247, "k": "教", "o": "キョウ", "ku": "おし.える, おそ.わる", "m": "teach, faith, doctrine" },
+{ "id": 248, "k": "習", "o": "シュウ", "ku": "なら.う", "m": "learn" },
+{ "id": 249, "k": "場", "o": "ジョウ", "ku": "ば", "m": "location, place" },
+{ "id": 250, "k": "所", "o": "ショ", "ku": "ところ", "m": "place, spot" },
+{ "id": 251, "k": "屋", "o": "オク", "ku": "や", "m": "roof, house, shop, dealer" },
+{ "id": 252, "k": "室", "o": "シツ", "ku": "むろ", "m": "room, apartment, chamber" },
+{ "id": 253, "k": "用", "o": "ヨウ", "ku": "もち.いる", "m": "utilize, business, service" },
+{ "id": 254, "k": "有", "o": "ユウ, ウ", "ku": "あ.る", "m": "possess, have, exist" },
+{ "id": 255, "k": "名", "o": "メイ, ミョウ", "ku": "な", "m": "name, noted, distinguished" },
+{ "id": 256, "k": "親", "o": "シン", "ku": "おや, した.しい", "m": "parent, intimacy, relative" },
+{ "id": 257, "k": "切", "o": "セツ, サイ", "ku": "き.る, き.れる", "m": "cut, cutoff, be sharp" },
+{ "id": 258, "k": "便", "o": "ベン, ビン", "ku": "たよ.り", "m": "convenience, mail, letter" },
+{ "id": 259, "k": "利", "o": "リ", "ku": "き.く", "m": "profit, advantage" },
+{ "id": 260, "k": "不", "o": "フ, ブ", "ku": "", "m": "negative, non-, bad" },
+{ "id": 261, "k": "若", "o": "ジャク", "ku": "わか.い", "m": "young" },
+{ "id": 262, "k": "元", "o": "ゲン, ガン", "ku": "もと", "m": "beginning, former time, origin" },
+{ "id": 263, "k": "気", "o": "キ, ケ", "ku": "いき", "m": "spirit, mind, air, atmosphere" },
+{ "id": 264, "k": "主", "o": "シュ, ス", "ku": "ぬし, おも", "m": "lord, chief, master, main" },
+{ "id": 265, "k": "点", "o": "テン", "ku": "", "m": "spot, point, mark" },
+{ "id": 266, "k": "線", "o": "セン", "ku": "すじ", "m": "line, track" },
+{ "id": 267, "k": "面", "o": "メン", "ku": "おもて", "m": "face, surface, page" },
+{ "id": 268, "k": "心", "o": "シン", "ku": "こころ", "m": "heart, mind, spirit" },
+{ "id": 269, "k": "思", "o": "シ", "ku": "おも.う", "m": "think" },
+{ "id": 270, "k": "性", "o": "セイ, ショウ", "ku": "", "m": "gender, nature, quality" },
+{ "id": 271, "k": "界", "o": "カイ", "ku": "", "m": "world, boundary" },
+{ "id": 272, "k": "全", "o": "ゼン", "ku": "まったく", "m": "whole, entire" },
+{ "id": 273, "k": "部", "o": "ブ", "ku": "", "m": "part, section, class" },
+{ "id": 274, "k": "屋", "o": "オク", "ku": "や", "m": "house, roof, shop" },
+{ "id": 275, "k": "室", "o": "シツ", "ku": "", "m": "room" },
+{ "id": 276, "k": "窓", "o": "ソウ", "ku": "まど", "m": "window, pane" },
+{ "id": 277, "k": "開", "o": "カイ", "ku": "あ.ける, ひら.く", "m": "open, unfold" },
+{ "id": 278, "k": "閉", "o": "ヘイ", "ku": "し.める, と.じる", "m": "close, shut" },
+{ "id": 279, "k": "歌", "o": "カ", "ku": "うた, うた.う", "m": "song, sing" },
+{ "id": 280, "k": "音", "o": "オン, イン", "ku": "おと, ね", "m": "sound, noise" },
+{ "id": 281, "k": "楽", "o": "ガク, ラク", "ku": "たの.しい, たの.しむ", "m": "music, comfort, ease" },
+{ "id": 282, "k": "味", "o": "ミ", "ku": "あじ, あじ.わる", "m": "flavor, taste" },
+{ "id": 283, "k": "色", "o": "ショク, シキ", "ku": "いろ", "m": "color" },
+{ "id": 284, "k": "赤", "o": "セキ, シャク", "ku": "あか, あか.い", "m": "red" },
+{ "id": 285, "k": "青", "o": "セイ, ショウ", "ku": "あお, あお.い", "m": "blue" },
+{ "id": 286, "k": "黒", "o": "コク", "ku": "くろ, くろ.い", "m": "black" },
+{ "id": 287, "k": "白", "o": "ハク, ビャク", "ku": "しろ, しろ.い", "m": "white" },
+{ "id": 288, "k": "黄", "o": "コウ, オウ", "ku": "き, こ", "m": "yellow" },
+{ "id": 289, "k": "茶", "o": "チャ, サ", "ku": "", "m": "tea" },
+{ "id": 290, "k": "銀", "o": "ギン", "ku": "しろがね", "m": "silver" },
+{ "id": 291, "k": "鉄", "o": "テツ", "ku": "くろがね", "m": "iron" },
+{ "id": 292, "k": "銅", "o": "ドウ", "ku": "あかね", "m": "copper" },
+{ "id": 293, "k": "絵", "o": "カイ, エ", "ku": "", "m": "picture, drawing" },
+{ "id": 294, "k": "越", "o": "エツ", "ku": "こ.す, こ.える", "m": "surpass, cross over, exceed" },
+{ "id": 295, "k": "欲", "o": "ヨク", "ku": "ほ.しい, ほ.っする", "m": "longing, greed, passion, want" },
+{ "id": 296, "k": "痛", "o": "ツウ", "ku": "いた.い, いた.む", "m": "pain, hurt, damage" },
+{ "id": 297, "k": "笑", "o": "ショウ", "ku": "わら.う, え.む", "m": "laugh, smile" },
+{ "id": 298, "k": "互", "o": "ゴ", "ku": "たが.い", "m": "mutually, reciprocally" },
+{ "id": 299, "k": "束", "o": "ソク", "ku": "たば, つか", "m": "bundle, manage, tie" },
+{ "id": 300, "k": "似", "o": "ジ", "ku": "に.る", "m": "becoming, resemble, imitate" },
+{ "id": 301, "k": "願", "o": "ガン", "ku": "ねが.う", "m": "petition, request, wish" },
+{ "id": 302, "k": "列", "o": "レツ", "ku": "", "m": "file, row, column" },
+{ "id": 303, "k": "探", "o": "タン", "ku": "さが.す, さぐ.る", "m": "search, look for" },
+{ "id": 304, "k": "逃", "o": "トウ", "ku": "に.げる, のが.す", "m": "escape, flee, set free" },
+{ "id": 305, "k": "遊", "o": "ユウ, ユ", "ku": "あそ.ぶ", "m": "play, enjoy oneself" },
+{ "id": 306, "k": "迷", "o": "メイ", "ku": "まよ.う", "m": "astray, perplexed, lost" },
+{ "id": 307, "k": "夢", "o": "ム", "ku": "ゆめ", "m": "dream, vision" },
+{ "id": 308, "k": "君", "o": "クン", "ku": "きみ", "m": "you, male name suffix" },
+{ "id": 309, "k": "閉", "o": "ヘイ", "ku": "と.じる, し.める", "m": "closed, shut" },
+{ "id": 310, "k": "緒", "o": "ショ, ジョ", "ku": "お", "m": "beginning, cord, strap" },
+{ "id": 311, "k": "折", "o": "セツ", "ku": "お.る, おり", "m": "fold, break, fracture" },
+{ "id": 312, "k": "草", "o": "ソウ", "ku": "くさ", "m": "grass, weeds, herbs" },
+{ "id": 313, "k": "暮", "o": "ボ", "ku": "く.らす, く.れる", "m": "evening, livelihood, spend time" },
+{ "id": 314, "k": "酒", "o": "シュ", "ku": "さけ, さか", "m": "sake, alcohol" },
+{ "id": 315, "k": "悲", "o": "ヒ", "ku": "かな.しい", "m": "grieve, sad" },
+{ "id": 316, "k": "晴", "o": "セイ", "ku": "は.れる, は.らす", "m": "clear up, sunny" },
+{ "id": 317, "k": "掛", "o": "ケイ", "ku": "か.ける, か.かる", "m": "hang, suspend, depend on" },
+{ "id": 318, "k": "到", "o": "トウ", "ku": "いた.る", "m": "arrival, proceed, reach" },
+{ "id": 319, "k": "寝", "o": "シン", "ku": "ね.る, ね.かす", "m": "lie down, sleep, rest" },
+{ "id": 320, "k": "暗", "o": "アン", "ku": "くら.い", "m": "darkness, disappear, shade" },
+{ "id": 321, "k": "盗", "o": "トウ", "ku": "ぬす.む", "m": "steal, rob" },
+{ "id": 322, "k": "吸", "o": "キュウ", "ku": "す.う", "m": "suck, inhale, imbibe" },
+{ "id": 323, "k": "陽", "o": "ヨウ", "ku": "ひ", "m": "sunshine, positive, male" },
+{ "id": 324, "k": "御", "o": "ギョ, ゴ", "ku": "おん, お", "m": "honorable, control, govern" },
+{ "id": 325, "k": "歯", "o": "シ", "ku": "は", "m": "tooth, cog" },
+{ "id": 326, "k": "忘", "o": "ボウ", "ku": "わす.れる", "m": "forget" },
+{ "id": 327, "k": "雪", "o": "セツ", "ku": "ゆき", "m": "snow" },
+{ "id": 328, "k": "吹", "o": "スイ", "ku": "ふ.く", "m": "blow, breathe, puff" },
+{ "id": 329, "k": "娘", "o": "ジョウ", "ku": "むすめ", "m": "daughter, girl" },
+{ "id": 330, "k": "誤", "o": "ゴ", "ku": "あやま.る", "m": "mistake, err, do wrong" },
+{ "id": 331, "k": "洗", "o": "セン", "ku": "あら.う", "m": "wash, inquire into" },
+{ "id": 332, "k": "慣", "o": "カン", "ku": "な.れる, な.らす", "m": "accustomed, get used to" },
+{ "id": 333, "k": "礼", "o": "レイ, ライ", "ku": "", "m": "salute, bow, ceremony, thanks" },
+{ "id": 334, "k": "窓", "o": "ソウ", "ku": "まど", "m": "window, pane" },
+{ "id": 335, "k": "昔", "o": "セキ, シャク", "ku": "むかし", "m": "once upon a time, old times" },
+{ "id": 336, "k": "貧", "o": "ヒン, ビン", "ku": "まず.しい", "m": "poverty, poor" },
+{ "id": 337, "k": "怒", "o": "ド", "ku": "いか.る, おこ.る", "m": "angry, be offended" },
+{ "id": 338, "k": "泳", "o": "エイ", "ku": "およ.ぐ", "m": "swim" },
+{ "id": 339, "k": "祖", "o": "ソ", "ku": "", "m": "ancestor, pioneer, founder" },
+{ "id": 340, "k": "杯", "o": "ハイ", "ku": "さかずき", "m": "glass, cup, counter for cups" },
+{ "id": 341, "k": "疲", "o": "ヒ", "ku": "つか.れる, つか.らす", "m": "exhausted, tire" },
+{ "id": 342, "k": "皆", "o": "カイ", "ku": "みな, みんな", "m": "all, everyone, everybody" },
+{ "id": 343, "k": "鳴", "o": "メイ", "ku": "な.く, な.る", "m": "chirp, cry, bark, ring" },
+{ "id": 344, "k": "腹", "o": "フく", "ku": "はら", "m": "abdomen, belly, stomach" },
+{ "id": 345, "k": "煙", "o": "エン", "ku": "けむ.る, けむり", "m": "smoke" },
+{ "id": 346, "k": "眠", "o": "ミン", "ku": "ねむ.る, ねむ.い", "m": "sleep, die, sleepy" },
+{ "id": 347, "k": "怖", "o": "フ", "ku": "こわ.い, お.じる", "m": "dreadful, fearful" },
+{ "id": 348, "k": "耳", "o": "ジ", "ku": "みみ", "m": "ear" },
+{ "id": 349, "k": "頂", "o": "チョウ", "ku": "いただ.く, いただき", "m": "receive, top, summit, peak" },
+{ "id": 350, "k": "箱", "o": "ソウ", "ku": "はこ", "m": "box, chest" },
+{ "id": 351, "k": "晩", "o": "バン", "ku": "", "m": "nightfall, night" },
+{ "id": 352, "k": "寒", "o": "カン", "ku": "さむ.い", "m": "cold" },
+{ "id": 353, "k": "髪", "o": "ハツ", "ku": "かみ", "m": "hair (on the head)" },
+{ "id": 354, "k": "忙", "o": "ボウ, モウ", "ku": "いそが.しい", "m": "busy, occupied" },
+{ "id": 355, "k": "才", "o": "サイ", "ku": "", "m": "genius, years old" },
+{ "id": 356, "k": "靴", "o": "カ", "ku": "くつ", "m": "shoes" },
+{ "id": 357, "k": "恥", "o": "チ", "ku": "はじ, はず.かしい", "m": "shame, dishonor" },
+{ "id": 358, "k": "偶", "o": "グウ", "ku": "たま", "m": "accidentally, even number, couple" },
+{ "id": 359, "k": "偉", "o": "イ", "ku": "えら.い", "m": "admirable, greatness, famous" },
+{ "id": 360, "k": "猫", "o": "ビョウ", "ku": "ねこ", "m": "cat" },
+{ "id": 361, "k": "幾", "o": "キ", "ku": "いく", "m": "how many, how much, some" },
+{ "id": 362, "k": "誰", "o": "スイ", "ku": "だれ", "m": "who, someone, somebody" },
+{ "id": 363, "k": "詞", "o": "シ", "ku": "ことば", "m": "part of speech, words, poetry" },
+{ "id": 364, "k": "詰", "o": "キツ", "ku": "つ.める, つ.まる", "m": "packed, close, reprove, jam" },
+{ "id": 365, "k": "双", "o": "ソウ", "ku": "ふた, たぐい", "m": "pair, set, comparison" },
+{ "id": 366, "k": "震", "o": "シン", "ku": "ふる.う, ふる.える", "m": "quake, shake, tremble" },
+{ "id": 367, "k": "咲", "o": "ショウ", "ku": "さ.く", "m": "blossom, bloom" },
+{ "id": 368, "k": "叫", "o": "キョウ", "ku": "さけ.ぶ", "m": "shout, exclaim, yell" },
+{ "id": 369, "k": "頼", "o": "ライ", "ku": "たの.む, たよ.る", "m": "trust, request, rely on" },
+{ "id": 370, "k": "頼", "o": "ライ", "ku": "たの.む", "m": "request, ask" }
+        ];
+
+        // Application State
+        let appState = {
+            masteredIds: new Set(JSON.parse(localStorage.getItem('n3_mastered') || '[]')),
+            starredIds: new Set(JSON.parse(localStorage.getItem('n3_starred') || '[]')),
+            quizStats: JSON.parse(localStorage.getItem('n3_stats') || '{"total": 0, "correct": 0}'),
+            currentTab: 'dashboard',
+            studyFilter: 'all',
+            studySearchTerm: '',
+            studyViewMode: 'grid',
+            flashcardIndex: 0,
+            activeCardFlipped: false,
+            // Quiz runtime state
+            quiz: {
+                active: false,
+                questions: [],
+                currentIndex: 0,
+                score: 0,
+                streak: 0,
+                maxStreak: 0,
+                audioEnabled: true,
+                startTime: 0,
+                answered: false
+            }
+        };
+
+        // Initialize Application
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedState();
+            renderDashboardStats();
+            renderStudyGrid();
+            updateFlashcard();
+        });
+
+        function saveStateToStorage() {
+            localStorage.setItem('n3_mastered', JSON.stringify([...appState.masteredIds]));
+            localStorage.setItem('n3_starred', JSON.stringify([...appState.starredIds]));
+            localStorage.setItem('n3_stats', JSON.stringify(appState.quizStats));
+        }
+
+        function loadSavedState() {
+            updateFilterCounts();
+        }
+
+        // Navigation Switcher
+        function switchTab(tabId) {
+            appState.currentTab = tabId;
+            const views = ['dashboard', 'study', 'quiz-setup', 'quiz-active', 'quiz-results'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const activeView = document.getElementById(`view-${tabId}`);
+            if (activeView) activeView.classList.remove('hidden');
+
+            // Update Nav Highlights
+            ['dashboard', 'study', 'quiz'].forEach(btnKey => {
+                const navBtn = document.getElementById(`nav-btn-${btnKey}`);
+                if (navBtn) {
+                    if (tabId.startsWith(btnKey)) {
+                        navBtn.className = "flex flex-col items-center text-purple-600 font-bold text-[10px]";
+                    } else {
+                        navBtn.className = "flex flex-col items-center text-slate-400 font-bold text-[10px] hover:text-purple-600";
+                    }
+                }
+            });
+
+            if (tabId === 'dashboard') renderDashboardStats();
+            if (tabId === 'study') renderStudyGrid();
+        }
+
+        function renderDashboardStats() {
+            const total = N3_KANJI_DATA.length;
+            const mastered = appState.masteredIds.size;
+            const starred = appState.starredIds.size;
+            const totalQ = appState.quizStats.total;
+            const correctQ = appState.quizStats.correct;
+            const accuracy = totalQ > 0 ? Math.round((correctQ / totalQ) * 100) : 0;
+            const masteredPct = Math.round((mastered / total) * 100);
+
+            document.getElementById('dash-total-count').textContent = total;
+            document.getElementById('dash-mastered-count').textContent = mastered;
+            document.getElementById('dash-starred-count').textContent = starred;
+            document.getElementById('dash-accuracy').textContent = `${accuracy}%`;
+            document.getElementById('dash-progress-bar').style.width = `${masteredPct}%`;
+
+            // Breakdown progress
+            document.getElementById('stat-mastered-pct').textContent = `${masteredPct}%`;
+            document.getElementById('stat-mastered-bar').style.width = `${masteredPct}%`;
+
+            const starredPct = Math.round((starred / total) * 100);
+            document.getElementById('stat-starred-pct').textContent = `${starredPct}%`;
+            document.getElementById('stat-starred-bar').style.width = `${starredPct}%`;
+
+            const unlearnedPct = Math.max(0, 100 - masteredPct);
+            document.getElementById('stat-unlearned-pct').textContent = `${unlearnedPct}%`;
+            document.getElementById('stat-unlearned-bar').style.width = `${unlearnedPct}%`;
+        }
+
+        function resetProgress() {
+            if (confirm("Are you sure you want to reset your mastered items and quiz statistics?")) {
+                appState.masteredIds.clear();
+                appState.starredIds.clear();
+                appState.quizStats = { total: 0, correct: 0 };
+                saveStateToStorage();
+                renderDashboardStats();
+                updateFilterCounts();
+                renderStudyGrid();
+            }
+        }
+
+        function getFilteredKanjiList() {
+            return N3_KANJI_DATA.filter(item => {
+                // Status Filter
+                if (appState.studyFilter === 'starred' && !appState.starredIds.has(item.id)) return false;
+                if (appState.studyFilter === 'learned' && !appState.masteredIds.has(item.id)) return false;
+                if (appState.studyFilter === 'unlearned' && appState.masteredIds.has(item.id)) return false;
+
+                // Search Filter
+                if (appState.studySearchTerm) {
+                    const q = appState.studySearchTerm.toLowerCase();
+                    return item.k.includes(q) || 
+                           item.m.toLowerCase().includes(q) || 
+                           item.o.toLowerCase().includes(q) || 
+                           item.ku.toLowerCase().includes(q);
+                }
+                return true;
+            });
+        }
+
+        function setStudyFilter(filterType) {
+            appState.studyFilter = filterType;
+            document.querySelectorAll('.filter-pill').forEach(btn => {
+                btn.className = 'filter-pill px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all';
+            });
+            const activeBtn = document.getElementById(`filter-btn-${filterType}`);
+            if (activeBtn) {
+                activeBtn.className = 'filter-pill active px-4 py-2 rounded-xl text-xs font-extrabold bg-purple-600 text-white shadow-md transition-all';
+            }
+            appState.flashcardIndex = 0;
+            renderStudyGrid();
+            updateFlashcard();
+        }
+
+        function filterStudyCards() {
+            appState.studySearchTerm = document.getElementById('study-search').value.trim();
+            appState.flashcardIndex = 0;
+            renderStudyGrid();
+            updateFlashcard();
+        }
+
+        function resetStudyFilters() {
+            document.getElementById('study-search').value = '';
+            appState.studySearchTerm = '';
+            setStudyFilter('all');
+        }
+
+        function updateFilterCounts() {
+            const total = N3_KANJI_DATA.length;
+            const starred = appState.starredIds.size;
+            const learned = appState.masteredIds.size;
+            const unlearned = total - learned;
+
+            document.getElementById('filter-starred-count').textContent = starred;
+            document.getElementById('filter-learned-count').textContent = learned;
+            document.getElementById('filter-unlearned-count').textContent = unlearned;
+        }
+
+        function setStudyViewMode(mode) {
+            appState.studyViewMode = mode;
+            const gridBtn = document.getElementById('view-mode-grid');
+            const cardBtn = document.getElementById('view-mode-card');
+            const gridContainer = document.getElementById('study-grid-view');
+            const cardContainer = document.getElementById('study-single-card-view');
+
+            if (mode === 'grid') {
+                gridBtn.className = 'flex-1 md:flex-initial px-4 py-1.5 rounded-xl text-xs font-bold bg-white text-purple-600 shadow-sm transition-all';
+                cardBtn.className = 'flex-1 md:flex-initial px-4 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-purple-600 transition-all';
+                gridContainer.classList.remove('hidden');
+                cardContainer.classList.add('hidden');
+            } else {
+                cardBtn.className = 'flex-1 md:flex-initial px-4 py-1.5 rounded-xl text-xs font-bold bg-white text-purple-600 shadow-sm transition-all';
+                gridBtn.className = 'flex-1 md:flex-initial px-4 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-purple-600 transition-all';
+                gridContainer.classList.add('hidden');
+                cardContainer.classList.remove('hidden');
+                updateFlashcard();
+            }
+        }
+
+        function renderStudyGrid() {
+            updateFilterCounts();
+            const list = getFilteredKanjiList();
+            const container = document.getElementById('study-grid-view');
+            const noMsg = document.getElementById('no-cards-msg');
+
+            if (list.length === 0) {
+                container.innerHTML = '';
+                noMsg.classList.remove('hidden');
+                return;
+            }
+
+            noMsg.classList.add('hidden');
+            container.innerHTML = list.map(item => {
+                const isMastered = appState.masteredIds.has(item.id);
+                const isStarred = appState.starredIds.has(item.id);
+
+                return `
+                    <div class="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all border ${isMastered ? 'border-emerald-200 bg-emerald-50/20' : 'border-slate-100'} flex flex-col justify-between relative group">
+                        <div class="flex justify-between items-start mb-2">
+                            <button onclick="toggleStarItem(${item.id})" class="text-lg ${isStarred ? 'text-amber-400' : 'text-slate-300 hover:text-amber-400'} transition-colors">
+                                <i class="fa-${isStarred ? 'solid' : 'regular'} fa-star"></i>
+                            </button>
+                            <button onclick="toggleLearnedItem(${item.id})" class="text-xs px-2 py-0.5 rounded-full font-bold transition-all ${isMastered ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">
+                                ${isMastered ? '✓ Learned' : 'Mark Learned'}
+                            </button>
+                        </div>
+                        <div class="text-center my-2 cursor-pointer" onclick="speakText('${item.k}')">
+                            <span class="font-jp text-5xl font-black text-slate-800 block mb-1 group-hover:scale-110 transition-transform">${item.k}</span>
+                            <span class="text-xs font-extrabold text-purple-600 block line-clamp-1">${item.m}</span>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-[11px] text-slate-500 font-jp space-y-0.5">
+                            ${item.o ? `<p><span class="text-purple-400 font-sans font-bold">音:</span> ${item.o}</p>` : ''}
+                            ${item.ku ? `<p><span class="text-pink-400 font-sans font-bold">訓:</span> ${item.ku}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Single Flashcard Mode Functions
+        function updateFlashcard() {
+            const list = getFilteredKanjiList();
+            if (list.length === 0) return;
+
+            if (appState.flashcardIndex >= list.length) appState.flashcardIndex = 0;
+            if (appState.flashcardIndex < 0) appState.flashcardIndex = list.length - 1;
+
+            const item = list[appState.flashcardIndex];
+            const isStarred = appState.starredIds.has(item.id);
+            const isMastered = appState.masteredIds.has(item.id);
+
+            document.getElementById('card-kanji').textContent = item.k;
+            document.getElementById('card-back-kanji').textContent = item.k;
+            document.getElementById('card-back-meaning').textContent = item.m;
+            document.getElementById('card-back-onyomi').textContent = item.o || '-';
+            document.getElementById('card-back-kunyomi').textContent = item.ku || '-';
+            document.getElementById('card-index-indicator').textContent = `${appState.flashcardIndex + 1} / ${list.length}`;
+
+            // Star Button State
+            const starBtn = document.getElementById('card-star-btn');
+            starBtn.innerHTML = `<i class="fa-${isStarred ? 'solid' : 'regular'} fa-star"></i>`;
+            starBtn.className = isStarred ? "text-amber-300 text-2xl hover:scale-125 transition-transform" : "text-white/60 hover:text-amber-300 text-2xl hover:scale-125 transition-transform";
+
+            // Learned Button State
+            const learnedBtn = document.getElementById('card-learned-btn');
+            learnedBtn.textContent = isMastered ? '✅ Learned' : 'Mark Learned';
+            learnedBtn.className = isMastered ? 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-300' : 'px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border';
+
+            // Reset Flip State
+            const cardEl = document.getElementById('flashcard');
+            cardEl.classList.remove('rotate-y-180');
+            appState.activeCardFlipped = false;
+        }
+
+        function toggleFlashcardFlip() {
+            const cardEl = document.getElementById('flashcard');
+            appState.activeCardFlipped = !appState.activeCardFlipped;
+            if (appState.activeCardFlipped) {
+                cardEl.classList.add('rotate-y-180');
+            } else {
+                cardEl.classList.remove('rotate-y-180');
+            }
+        }
+
+        function nextFlashcard() {
+            appState.flashcardIndex++;
+            updateFlashcard();
+        }
+
+        function prevFlashcard() {
+            appState.flashcardIndex--;
+            updateFlashcard();
+        }
+
+        function toggleStarCurrentCard() {
+            const list = getFilteredKanjiList();
+            if (list.length === 0) return;
+            const item = list[appState.flashcardIndex];
+            toggleStarItem(item.id);
+            updateFlashcard();
+        }
+
+        function toggleLearnedCurrentCard() {
+            const list = getFilteredKanjiList();
+            if (list.length === 0) return;
+            const item = list[appState.flashcardIndex];
+            toggleLearnedItem(item.id);
+            updateFlashcard();
+        }
+
+        function toggleStarItem(id) {
+            if (appState.starredIds.has(id)) {
+                appState.starredIds.delete(id);
+            } else {
+                appState.starredIds.add(id);
+            }
+            saveStateToStorage();
+            renderDashboardStats();
+            renderStudyGrid();
+        }
+
+        function toggleLearnedItem(id) {
+            if (appState.masteredIds.has(id)) {
+                appState.masteredIds.delete(id);
+            } else {
+                appState.masteredIds.add(id);
+            }
+            saveStateToStorage();
+            renderDashboardStats();
+            renderStudyGrid();
+        }
+
+        // Text-To-Speech Speech Synthesis
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.8;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function speakCurrentKanji() {
+            const list = getFilteredKanjiList();
+            if (list.length > 0) {
+                speakText(list[appState.flashcardIndex].k);
+            }
+        }
+
+        function speakQuizPrompt() {
+            if (appState.quiz.active && appState.quiz.questions.length > 0) {
+                const q = appState.quiz.questions[appState.quiz.currentIndex];
+                speakText(q.spokenText);
+            }
+        }
+
+        // Quiz Engine Functions
+        function startQuiz(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const mode = formData.get('quizMode');
+            const poolType = formData.get('quizPool');
+            const requestedCount = parseInt(formData.get('quizCount'), 10);
+            const audioEnabled = document.getElementById('quiz-audio-toggle').checked;
+
+            let sourcePool = N3_KANJI_DATA;
+            if (poolType === 'unlearned') {
+                sourcePool = N3_KANJI_DATA.filter(item => !appState.masteredIds.has(item.id));
+            } else if (poolType === 'starred') {
+                sourcePool = N3_KANJI_DATA.filter(item => appState.starredIds.has(item.id));
+            }
+
+            if (sourcePool.length < 4) {
+                alert(`Not enough Kanji in the selected pool (${sourcePool.length} available). Please select a broader pool with at least 4 items.`);
+                return;
+            }
+
+            const shuffledPool = [...sourcePool].sort(() => Math.random() - 0.5);
+            const questionCount = Math.min(requestedCount, shuffledPool.length);
+            const selectedItems = shuffledPool.slice(0, questionCount);
+
+            const questions = selectedItems.map(item => {
+                // Generate 3 wrong distractors from full N3 dataset
+                const distractors = N3_KANJI_DATA
+                    .filter(x => x.id !== item.id)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3);
+
+                let promptMain = '';
+                let promptSub = '';
+                let spokenText = item.k;
+                let correctAnswer = '';
+                let options = [];
+
+                if (mode === 'kanjiToMeaning') {
+                    promptSub = 'Identify the English Meaning';
+                    promptMain = item.k;
+                    correctAnswer = item.m;
+                    options = [item.m, ...distractors.map(d => d.m)].sort(() => Math.random() - 0.5);
+                } else if (mode === 'meaningToKanji') {
+                    promptSub = 'Identify the Matching Kanji';
+                    promptMain = item.m;
+                    spokenText = item.k;
+                    correctAnswer = item.k;
+                    options = [item.k, ...distractors.map(d => d.k)].sort(() => Math.random() - 0.5);
+                } else if (mode === 'readingToKanji') {
+                    promptSub = 'Identify the Kanji for Reading';
+                    promptMain = [item.o, item.ku].filter(Boolean).join(' / ');
+                    spokenText = item.k;
+                    correctAnswer = item.k;
+                    options = [item.k, ...distractors.map(d => d.k)].sort(() => Math.random() - 0.5);
+                }
+
+                return {
+                    item,
+                    promptSub,
+                    promptMain,
+                    spokenText,
+                    correctAnswer,
+                    options
+                };
+            });
+
+            appState.quiz = {
+                active: true,
+                questions,
+                currentIndex: 0,
+                score: 0,
+                streak: 0,
+                maxStreak: 0,
+                audioEnabled,
+                startTime: Date.now(),
+                answered: false
+            };
+
+            switchTab('quiz-active');
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const q = appState.quiz.questions[appState.quiz.currentIndex];
+            appState.quiz.answered = false;
+
+            document.getElementById('quiz-progress-text').textContent = `${appState.quiz.currentIndex + 1} / ${appState.quiz.questions.length}`;
+            document.getElementById('quiz-streak-count').textContent = appState.quiz.streak;
+            document.getElementById('quiz-score-text').textContent = appState.quiz.score;
+
+            document.getElementById('quiz-prompt-sub').textContent = q.promptSub;
+            document.getElementById('quiz-prompt-main').textContent = q.promptMain;
+
+            // Reset Feedback and Next Button
+            document.getElementById('quiz-feedback-box').className = 'hidden mt-6 p-4 rounded-2xl transition-all border text-center';
+            const nextBtn = document.getElementById('quiz-next-btn');
+            nextBtn.classList.add('hidden');
+            nextBtn.classList.remove('flex');
+
+            // Render Option Buttons
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = q.options.map((opt, idx) => `
+                <button onclick="selectAnswer('${opt.replace(/'/g, "\\'")}', this)" class="quiz-option-btn p-4 bg-slate-50 hover:bg-purple-50 border-2 border-slate-200 hover:border-purple-400 rounded-2xl font-bold text-slate-800 text-left transition-all btn-bounce flex items-center justify-between">
+                    <span class="font-jp text-base sm:text-lg">${opt}</span>
+                    <span class="w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center text-xs text-slate-400 font-sans">${idx + 1}</span>
+                </button>
+            `).join('');
+
+            if (appState.quiz.audioEnabled) {
+                speakQuizPrompt();
+            }
+        }
+
+        function selectAnswer(selectedOpt, btnEl) {
+            if (appState.quiz.answered) return;
+            appState.quiz.answered = true;
+
+            const q = appState.quiz.questions[appState.quiz.currentIndex];
+            const isCorrect = selectedOpt === q.correctAnswer;
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            const feedbackTitle = document.getElementById('quiz-feedback-title');
+            const feedbackDetail = document.getElementById('quiz-feedback-detail');
+
+            // Disable all option buttons
+            document.querySelectorAll('.quiz-option-btn').forEach(b => {
+                b.onclick = null;
+                b.classList.remove('hover:bg-purple-50', 'hover:border-purple-400', 'btn-bounce');
+            });
+
+            if (isCorrect) {
+                btnEl.className = "quiz-option-btn p-4 bg-emerald-500 border-2 border-emerald-600 text-white rounded-2xl font-bold text-left flex items-center justify-between shadow-md";
+                appState.quiz.score++;
+                appState.quiz.streak++;
+                if (appState.quiz.streak > appState.quiz.maxStreak) {
+                    appState.quiz.maxStreak = appState.quiz.streak;
+                }
+
+                // Automatically mark correct item as mastered
+                appState.masteredIds.add(q.item.id);
+
+                feedbackBox.className = "mt-6 p-4 rounded-2xl transition-all border text-center bg-emerald-50 border-emerald-200 text-emerald-800";
+                feedbackTitle.textContent = "🎉 Excellent! Correct Answer!";
+                feedbackDetail.textContent = `${q.item.k} = ${q.item.m} (Onyomi: ${q.item.o || '-'}, Kunyomi: ${q.item.ku || '-'})`;
+            } else {
+                btnEl.className = "quiz-option-btn p-4 bg-rose-500 border-2 border-rose-600 text-white rounded-2xl font-bold text-left flex items-center justify-between shadow-md";
+                appState.quiz.streak = 0;
+
+                // Highlight correct option
+                document.querySelectorAll('.quiz-option-btn').forEach(b => {
+                    if (b.textContent.includes(q.correctAnswer)) {
+                        b.className = "quiz-option-btn p-4 bg-emerald-100 border-2 border-emerald-500 text-emerald-900 rounded-2xl font-bold text-left flex items-center justify-between";
+                    }
+                });
+
+                feedbackBox.className = "mt-6 p-4 rounded-2xl transition-all border text-center bg-rose-50 border-rose-200 text-rose-800";
+                feedbackTitle.textContent = "❌ Not Quite Right!";
+                feedbackDetail.textContent = `Correct answer was "${q.correctAnswer}" for ${q.item.k} (${q.item.m})`;
+            }
+
+            feedbackBox.classList.remove('hidden');
+            const nextBtn = document.getElementById('quiz-next-btn');
+            nextBtn.classList.remove('hidden');
+            nextBtn.classList.add('flex');
+
+            // Update state stats
+            appState.quizStats.total++;
+            if (isCorrect) appState.quizStats.correct++;
+            saveStateToStorage();
+        }
+
+        function nextQuestion() {
+            appState.quiz.currentIndex++;
+            if (appState.quiz.currentIndex < appState.quiz.questions.length) {
+                renderQuizQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            appState.quiz.active = false;
+            const totalQ = appState.quiz.questions.length;
+            const score = appState.quiz.score;
+            const accuracy = Math.round((score / totalQ) * 100);
+            const timeDiffSec = Math.round((Date.now() - appState.quiz.startTime) / 1000);
+            const mins = Math.floor(timeDiffSec / 60);
+            const secs = timeDiffSec % 60;
+            const formattedTime = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+            document.getElementById('results-accuracy-pct').textContent = `${accuracy}%`;
+            document.getElementById('results-score-count').textContent = `You scored ${score} out of ${totalQ} questions correctly!`;
+            document.getElementById('results-max-streak').textContent = `${appState.quiz.maxStreak} 🔥`;
+            document.getElementById('results-time-taken').textContent = formattedTime;
+
+            switchTab('quiz-results');
+            renderDashboardStats();
+        }
+    </script>
+</body>
+</html>
