@@ -267,13 +267,26 @@
     });
 
     // Helper: Extract Spreadsheet ID
-    function getCsvUrl(url) {
-      const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-      const sheetId = match ? match[1] : url.trim();
-      const gidMatch = url.match(/gid=([0-9]+)/);
-      const gidParam = gidMatch ? `&gid=${gidMatch[1]}` : '';
-      return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv${gidParam}`;
-    }
+function getCsvUrl(url) {
+  url = url.trim();
+  
+  // If user pasted a "Publish to Web" CSV URL directly
+  if (url.includes('/pub?') || url.endsWith('.csv')) {
+    return url;
+  }
+
+  // Extract Spreadsheet ID
+  const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+  if (!match) return url;
+  const sheetId = match[1];
+
+  // Extract GID (Sheet ID) if available
+  const gidMatch = url.match(/gid=([0-9]+)/);
+  const gidParam = gidMatch ? `&gid=${gidMatch[1]}` : '';
+
+  // Use export?format=csv endpoint for cleaner browser fetching
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv${gidParam}`;
+}
 
     // Fetch and Parse CSV directly from Google Sheet
     function fetchSheetData() {
